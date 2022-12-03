@@ -67,6 +67,7 @@ module.exports = app => {
     await modal.deleteMany({})
     var user={username:"admin",password:"123456"}
     await modal.create(user)
+
     res.send(user)
   })
 

@@ -37,13 +37,16 @@ module.exports = app => {
     //     path: 'newsList'
     //   }
     // }).lean()
+    // return res.send(parent);
     const parent = await Category.findOne({
       name: '新闻分类'
     })
     console.log(parent)
+    // aggregate 聚合查询
     const cats = await Category.aggregate([
       { $match: { parent: parent._id } },
       {
+        // join
         $lookup: {
           from: 'articles',
           localField: '_id',

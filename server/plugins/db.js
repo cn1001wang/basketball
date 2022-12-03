@@ -5,4 +5,5 @@ module.exports = app => {
   })
 
   require('require-all')(__dirname + '/../models')
+  require('require-all')(__dirname + '/../models/new')
 }
