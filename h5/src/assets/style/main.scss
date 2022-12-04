@@ -1,0 +1,9 @@
+$test-color: red;
+
+@import "variables.scss";
+@import "common.scss";
+@import "init.scss";
+
+.page-header {
+  height: 52px;
+}
