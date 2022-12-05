@@ -24,6 +24,10 @@ h5 {
   line-height: 1;
 }
 
+p {
+  margin: 0;
+}
+
 ol,
 ul {
   list-style: none;
@@ -111,7 +115,7 @@ label {
 
 //加载到头或没有数据的提示语
 .finished-text {
-  color: map-get($colors, "grey");
+  color: map-get($colors, 'grey');
   font-size: 14px;
   line-height: 1.5;
   text-align: center;
@@ -140,7 +144,7 @@ label {
   max-width: 10em;
   overflow: hidden;
 }
-.selected .sub-label{
+.selected .sub-label {
   margin-right: 20px;
 }
 // 适用于element的option选项最右侧文字
