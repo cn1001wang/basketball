@@ -26,7 +26,7 @@
               fit="cover"
               src="https://ga-img.bytefly.cn/default-images/team-2.jpg"
             />
-            <div>勇士队</div>
+            <div class="text-black pt-1">勇士队</div>
           </div>
           <div class="flex-1">
             <p>12月5日 20:22</p>
@@ -49,7 +49,7 @@
               fit="cover"
               src="https://ga-img.bytefly.cn/default-images/team-1.jpg"
             />
-            <div>骑士队</div>
+            <div class="text-black pt-1">骑士队</div>
           </div>
         </div>
         <template #right>
@@ -73,15 +73,16 @@
           <p class="fs-sm">{{ game.teams.length }}支球队</p>
         </div>
       </div>
-      <div>
+      <div class="game-list-footer">
         <van-icon name="plus" size="22" />
         创建赛事
       </div>
     </div>
   </van-popup>
 </template>
-<script setup lang="ts">
+<script setup>
 import { ref, reactive } from 'vue'
+import { matchApi } from '@/service/api/index.js'
 
 const active = ref(0)
 const addVisible = ref(false)
@@ -93,24 +94,30 @@ function openAdd() {
 
 const gameChooseVisible = ref(false)
 
-const games = reactive([
-  { _id: 1, name: '库里杯', teams: [{}, {}] },
-  { _id: 2, name: '德杯', teams: [{}, {}] },
-])
+const games = ref([])
+matchApi.getMatches().then((res) => {
+  games.value = res
+})
 </script>
 <style lang="scss">
 .game-list-wrap {
   width: 70vw;
+  height: 100%;
   .game-list-header {
     padding: 15px 10px 10px;
     border-bottom: 1px solid #f2f2f2;
   }
   .game-list-content {
+    height: calc(100% - 90px);
+    overflow: auto;
     .game-list-data {
       padding: 5px 10px;
       border-bottom: 1px solid #f2f2f2;
       line-height: 1.8;
     }
+  }
+  .game-list-footer {
+    padding: 10px;
   }
 }
 .date-p {

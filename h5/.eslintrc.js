@@ -73,7 +73,7 @@ module.exports = {
     // 禁止在 return 语句中使用赋值语句
     'no-return-assign': 'warn',
     // 禁用不必要的 return await
-    'no-return-await': 'warn',
+    'no-return-await': 'off',
     // 禁止自我赋值
     'no-self-assign': 'warn',
     // 禁止自身比较

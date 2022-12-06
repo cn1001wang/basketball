@@ -2,8 +2,10 @@ const express = require("express")
 
 const app = express()
 
-app.set('secret', 'i2u34y12oi3u4y8')
-
+app.set('secret', 'fasd54sdcf276f')
+var corsOptions = {
+  origin: 'http://localhost:8000',
+}
 app.use(require('cors')())
 app.use(express.json())
 app.use('/', express.static(__dirname + '/wwwroot/web'))
