@@ -73,7 +73,7 @@
           <p class="fs-sm">{{ game.teams.length }}支球队</p>
         </div>
       </div>
-      <div class="game-list-footer">
+      <div class="game-list-footer" @click="toMatchAdd">
         <van-icon name="plus" size="22" />
         创建赛事
       </div>
@@ -83,6 +83,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { matchApi } from '@/service/api/index.js'
+// import { push } from 'vue-router'
 
 const active = ref(0)
 const addVisible = ref(false)
@@ -98,6 +99,10 @@ const games = ref([])
 matchApi.getMatches().then((res) => {
   games.value = res
 })
+
+function toMatchAdd() {
+  // push('/match/add')
+}
 </script>
 <style lang="scss">
 .game-list-wrap {

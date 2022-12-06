@@ -9,6 +9,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'Home',
+    redirect: '/game',
     component: () => import('@/pages/Home/Home.vue'),
     children: [
       {
@@ -27,6 +28,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/setting/Setting.vue'),
       },
     ],
+  },
+  {
+    path: '/match/add',
+    name: 'MatchAdd',
+    component: () => import('@/pages/match/add.vue'),
   },
 ]
 
