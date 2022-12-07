@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 
 const schema = new mongoose.Schema({
   username: { type: String },
+  phone: { type: String },
   password: {
     type: String,
     select: false,
@@ -12,5 +13,3 @@ const schema = new mongoose.Schema({
     }
   },
 })
-
-module.exports = mongoose.model('AdminUser', schema)
