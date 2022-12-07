@@ -1,0 +1,161 @@
+// * {
+//   margin: 0;
+//   padding: 0;
+// }
+
+*:focus {
+  outline: none !important;
+}
+
+html,
+body {
+  // font: normal 14px/1 'Lantinghei SC', 'Open Sans', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', 'Microsoft YaHei', STHeiti, SimSun, Arial, sans-serif;
+  background-color: white;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-weight: normal;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+p {
+  margin: 0;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+// em {
+//   font-style: normal;
+// }
+
+// strong {
+//   font-weight: normal;
+// }
+
+textarea {
+  resize: vertical;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+
+  th {
+    font-weight: normal;
+  }
+}
+
+label {
+  font-weight: normal;
+}
+
+.text-label {
+  display: inline-block;
+  padding-top: 10px;
+}
+
+.text-link {
+  color: #03a9f4;
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.text-line {
+  text-decoration: underline;
+}
+
+.vertical-md {
+  vertical-align: middle;
+}
+// text overflow
+.text-ellipsis {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.maxw-100 {
+  max-width: 100%;
+}
+
+// width, height
+.w-100 {
+  width: 100%;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+.word-keep {
+  word-break: keep-all;
+  white-space: nowrap;
+}
+
+.bs-base {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
+}
+
+.bs-light {
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+//加载到头或没有数据的提示语
+.finished-text {
+  color: map-get($colors, 'grey');
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.float-right {
+  float: right;
+}
+
+.cur-pointer {
+  cursor: pointer;
+}
+
+// 适用于element的option选项首选项
+.label {
+  float: left;
+  font-size: 13px;
+  margin-right: 10px;
+}
+
+// 适用于element的option选项子选项
+.sub-label {
+  float: right;
+  color: #8492a6;
+  font-size: 12px;
+  max-width: 10em;
+  overflow: hidden;
+}
+.selected .sub-label {
+  margin-right: 20px;
+}
+// 适用于element的option选项最右侧文字
+.option-right_text {
+  color: #999;
+  float: right;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 8em;
+  text-align: right;
+  margin-left: 1em;
+}

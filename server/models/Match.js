@@ -6,7 +6,7 @@ const schema = new mongoose.Schema({
 //   games: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'Game' }],
   teams: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'Team' }],
 })
-schema.virtual('gamse', {
+schema.virtual('games', {
   localField: '_id',
   foreignField: 'match',
   justOne: true,
