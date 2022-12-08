@@ -1,5 +1,12 @@
 <template>
-  <van-nav-bar title="创建赛事" left-text="返回" left-arrow @click-left="onClickLeft" />
+  <van-nav-bar
+    title="创建赛事"
+    left-text="返回"
+    right-text="存储"
+    left-arrow
+    @click-left="onClickLeft"
+    @click-right="onSubmit"
+  />
   <van-form @submit="onSubmit">
     <van-cell-group inset>
       <van-field
@@ -18,14 +25,16 @@
         :rules="[{ required: true, message: '请填写图标' }]"
       />
     </van-cell-group>
-    <div style="margin: 16px">
+    <!-- <div style="margin: 16px">
       <van-button round block type="primary" native-type="submit"> 提交 </van-button>
-    </div>
+    </div> -->
   </van-form>
 </template>
 <script setup lang="ts">
 import router from '@/router'
 import { reactive } from 'vue'
+import { matchApi } from '@/service/api/index.js'
+import { showNotify } from 'vant'
 
 const form = reactive({
   name: '',
@@ -35,5 +44,10 @@ const form = reactive({
 function onClickLeft() {
   router.back()
 }
-function onSubmit() {}
+async function onSubmit() {
+  if (!form.name) {
+    return showNotify({ type: 'danger', message: '请输入赛事名' })
+  }
+  var res = await matchApi.saveMatch(form)
+}
 </script>

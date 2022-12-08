@@ -83,7 +83,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { matchApi } from '@/service/api/index.js'
-// import { push } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 const active = ref(0)
 const addVisible = ref(false)
@@ -100,8 +100,9 @@ matchApi.getMatches().then((res) => {
   games.value = res
 })
 
+const router = useRouter()
 function toMatchAdd() {
-  // push('/match/add')
+  router.push('/match/add')
 }
 </script>
 <style lang="scss">
