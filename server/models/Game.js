@@ -7,6 +7,9 @@ const schema = new mongoose.Schema({
   dateTime: { type: Date, default: Date.now },
   rule: { type: mongoose.SchemaTypes.ObjectId, ref: "Rule" },
   place: { type: mongoose.SchemaTypes.ObjectId, ref: "Place" },
+  // 结果
 });
+
+// events
 
 module.exports = mongoose.model("Game", schema);
