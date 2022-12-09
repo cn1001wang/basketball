@@ -34,7 +34,8 @@
 import router from '@/router'
 import { reactive } from 'vue'
 import { matchApi } from '@/service/api/index.js'
-import { showNotify } from 'vant'
+import { showToast } from 'vant'
+import 'vant/es/toast/style';
 
 const form = reactive({
   name: '',
@@ -46,8 +47,11 @@ function onClickLeft() {
 }
 async function onSubmit() {
   if (!form.name) {
-    return showNotify({ type: 'danger', message: '请输入赛事名' })
+    return showToast({ type: 'fail', message: '请输入赛事名' })
   }
   var res = await matchApi.saveMatch(form)
+
+  showToast({ type: 'success', message: '创建成功！' })
+  router.back()
 }
 </script>

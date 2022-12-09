@@ -1,9 +1,7 @@
 <template>
   <div class="page-header">
     <div class="page-header-action"><van-icon name="bar-chart-o" size="22" /></div>
-    <span @click="gameChooseVisible = true"
-      >美国职业篮球联赛<van-icon name="arrow-down" class="ml-2"
-    /></span>
+    <span @click="openMatchList">{{data.activeMatch??'请先添加赛事'}}<van-icon name="arrow-down" class="ml-2" /></span>
     <div class="page-header-action">
       <van-icon name="plus" size="22" @click="openAdd" />
     </div>
@@ -64,13 +62,14 @@
     cancel-text="取消"
     close-on-click-action
   />
-  <van-popup v-model:show="gameChooseVisible" round :style="{ height: '50%' }">
+  <van-popup v-model:show="matchListVisible" round :style="{ height: '50%' }">
     <div class="game-list-wrap">
       <div class="game-list-header">选择赛事</div>
       <div class="game-list-content">
-        <div v-for="(game, i) in games" :key="i" class="game-list-data">
-          <p>{{ game.name }}</p>
-          <p class="fs-sm">{{ game.teams.length }}支球队</p>
+        <div v-for="(match, i) in matches" :key="i" class="game-list-data">
+          <p>{{ match.name }}</p>
+          <button @click="removeMatch(match)">删除</button>
+          <p class="fs-sm">{{ match.teams.length }}支球队</p>
         </div>
       </div>
       <div class="game-list-footer" @click="toMatchAdd">
@@ -93,16 +92,35 @@ function openAdd() {
   addVisible.value = true
 }
 
-const gameChooseVisible = ref(false)
-
-const games = ref([])
-matchApi.getMatches().then((res) => {
-  games.value = res
+const matchListVisible = ref(false)
+function openMatchList() {
+  matchListVisible.value = true
+  loadMatches()
+}
+const matches = ref([])
+const data = reactive({
+  activeMatch: null,
 })
+function loadMatches() {
+  matchApi.getMatches().then((res) => {
+    matches.value = res
+    if (res.length === 0) {
+      matchListVisible.value = true
+    } else {
+      data.activeMatch = res[0]
+    }
+  })
+}
+loadMatches()
 
 const router = useRouter()
 function toMatchAdd() {
   router.push('/match/add')
+}
+async function removeMatch(match) {
+  await matchApi.removeMatch(match._id)
+  loadMatches()
+  alert('删除成功')
 }
 </script>
 <style lang="scss">

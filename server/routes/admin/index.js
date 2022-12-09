@@ -39,7 +39,7 @@ module.exports = app => {
     res.send(model)
   })
   // 登录校验中间件
-  // const authMiddleware = require('../../middleware/auth')
+  const authMiddleware = require('../../middleware/auth')
   const resourceMiddleware = require('../../middleware/resource')
   app.use('/admin/api/rest/:resource',  resourceMiddleware(), router)
 
