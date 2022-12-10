@@ -8,7 +8,7 @@ const schema = new mongoose.Schema({
     select: false,
     set(val) {
       let bcrypt=require('bcrypt')
-      const salt = bcrypt.genSaltSync(10);
+      const salt = bcrypt.genSaltSync(10)
       return bcrypt.hashSync(val, salt)
     }
   },

@@ -9,7 +9,7 @@
 
 html,
 body {
-  // font: normal 14px/1 'Lantinghei SC', 'Open Sans', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', 'Microsoft YaHei', STHeiti, SimSun, Arial, sans-serif;
+  font: normal 16px 'Lantinghei SC', 'Open Sans', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', 'Microsoft YaHei', STHeiti, SimSun, Arial, sans-serif;
   background-color: white;
 }
 
@@ -158,4 +158,8 @@ label {
   max-width: 8em;
   text-align: right;
   margin-left: 1em;
+}
+.main-bg{
+  background-color: #f2f2f2;
+  min-height: calc(100vh - 46px);
 }

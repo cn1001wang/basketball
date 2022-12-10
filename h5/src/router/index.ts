@@ -38,7 +38,7 @@ const routes: RouteRecordRaw[] = [
     path: '/game/add',
     name: 'GameAdd',
     component: () => import('@/pages/game/Add.vue'),
-    props: (route) => ({ matchId: Number(route.query.matchId), matchName: route.query.matchName }),
+    props: (route) => ({ matchId: route.query.matchId, matchName: route.query.matchName }),
   },
 ]
 

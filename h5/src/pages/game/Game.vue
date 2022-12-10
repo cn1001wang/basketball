@@ -1,25 +1,15 @@
 <template>
   <div class="page-header">
     <div class="page-header-action">
-      <van-icon
-        name="bar-chart-o"
-        size="22"
-      />
+      <van-icon name="bar-chart-o" size="22" />
     </div>
     <div @click="openMatchList">
-      <span v-if="data.activeMatch">{{data.activeMatch.name }}</span>
+      <span v-if="data.activeMatch">{{ data.activeMatch.name }}</span>
       <span v-else>请添加赛事</span>
-      <van-icon
-        name="arrow-down"
-        class="ml-2"
-      />
+      <van-icon name="arrow-down" class="ml-2" />
     </div>
     <div class="page-header-action">
-      <van-icon
-        name="plus"
-        size="22"
-        @click="openAdd"
-      />
+      <van-icon v-if="data.activeMatch" name="plus" size="22" @click="openAdd" />
     </div>
   </div>
   <div class="text-center">
@@ -46,10 +36,7 @@
               <span class="score-span">16</span>
             </div>
             <div>
-              <van-tag
-                type="success"
-                round
-              >进行中</van-tag>
+              <van-tag type="success" round>进行中</van-tag>
             </div>
             <div class="text-grey">回浦中学篮球场</div>
           </div>
@@ -66,12 +53,7 @@
           </div>
         </div>
         <template #right>
-          <van-button
-            class="delete-button"
-            square
-            type="danger"
-            text="删除"
-          />
+          <van-button class="delete-button" square type="danger" text="删除" />
         </template>
       </van-swipe-cell>
     </div>
@@ -83,32 +65,18 @@
     close-on-click-action
     @select="actionClick"
   />
-  <van-popup
-    v-model:show="matchListVisible"
-    round
-    :style="{ height: '50%' }"
-  >
+  <van-popup v-model:show="matchListVisible" round :style="{ height: '50%' }">
     <div class="game-list-wrap">
       <div class="game-list-header">选择赛事</div>
       <div class="game-list-content">
-        <div
-          v-for="(match, i) in matches"
-          :key="i"
-          class="game-list-data"
-        >
+        <div v-for="(match, i) in matches" :key="i" class="game-list-data">
           <p>{{ match.name }}</p>
           <button @click="removeMatch(match)">删除</button>
           <p class="fs-sm">{{ match.teams.length }}支球队</p>
         </div>
       </div>
-      <div
-        class="game-list-footer"
-        @click="toMatchAdd"
-      >
-        <van-icon
-          name="plus"
-          size="22"
-        />
+      <div class="game-list-footer" @click="toMatchAdd">
+        <van-icon name="plus" size="22" />
         创建赛事
       </div>
     </div>
@@ -122,9 +90,9 @@ const router = useRouter()
 
 const addVisible = ref(false)
 const addActions = [{ name: '创建新比赛' }, { name: '添加比赛结果' }, { name: '创建队内赛' }]
-function actionClick(item){
-  console.log(item.name);
-  router.push("/game/add")
+function actionClick(item) {
+  let match=data.activeMatch
+  router.push(`/game/add?matchId=${match._id}&matchName=${match.name}`)
 }
 
 function openAdd() {
