@@ -7,25 +7,21 @@
     @click-left="onClickLeft"
     @click-right="onSubmit"
   />
-  <!-- <van-form @submit="onSubmit">
-    <van-cell-group inset>
-      <van-field
-        v-model="form.name"
-        name="赛事名称"
-        label="赛事名称"
-        placeholder="请输入赛事名称"
-        :rules="[{ required: true, message: '请填写赛事名称' }]"
-      />
-      <van-field
-        v-model="form.logo"
-        type="password"
-        name="图标"
-        label="图标"
-        placeholder="图标"
-        :rules="[{ required: true, message: '请填写图标' }]"
-      />
-    </van-cell-group>
-  </van-form> -->
+  <div>
+    <p class="text-center">德杯</p>
+    <div class="d-flex">
+      <div>
+        <van-icon name="add-o" />
+        <p>选择球队</p>
+      </div>
+      <i class="iconfont icon-Jersey"></i>
+      <div>VS</div>
+      <div>
+        <van-icon name="add-o" />
+        <p>选择球队</p>
+      </div>
+    </div>
+  </div>
 </template>
 <script setup lang="ts">
 import router from '@/router'
