@@ -8,9 +8,11 @@
 </template>
 
 <script setup lang="ts">
+import { useRoute } from 'vue-router'
+
 import { ref } from 'vue'
 
-const active = ref(0)
+const active: any = ref(useRoute().meta.tab)
 </script>
 
 <style lang="scss" scoped>
