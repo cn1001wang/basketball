@@ -7,9 +7,11 @@ const schema = new mongoose.Schema({
     type: String,
     select: false,
     set(val) {
-      let bcrypt=require('bcrypt')
+      let bcrypt = require('bcrypt')
       const salt = bcrypt.genSaltSync(10)
       return bcrypt.hashSync(val, salt)
-    }
+    },
   },
 })
+
+module.exports = mongoose.model("AdminUser", schema);

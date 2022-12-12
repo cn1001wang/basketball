@@ -54,6 +54,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/team/Detail.vue'),
     props: true,
   },
+  {
+    path: '/player/add',
+    name: 'PlayerAdd',
+    component: () => import('@/pages/player/Add.vue'),
+    props: (route) => ({ teamId: route.query.teamId, playerId: route.query.playerId }),
+  },
 ]
 
 const router = createRouter({

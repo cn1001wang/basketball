@@ -22,10 +22,28 @@
       />
       <div class="flex-1 ml-4">
         <p class="team-name">{{ team.name }}</p>
-        <p>队员：{{ team.players.length }}</p>
+        <p>队员：{{ team.players ? team.players.length : 0 }}</p>
         <p>联系人：{{ team.contactPerson }}</p>
         <p>联系电话：{{ team.contactPhone }}</p>
       </div>
+    </div>
+    <div>
+      <van-tabs v-model:active="active">
+        <van-tab title="队员管理">
+          <div v-if="team.players" class="px-3">
+            <div v-for="item in team.players" class="player-item" @click="toEditPlayer(item._id)">
+              <span class="flex-1">{{ item.name }}</span>
+              <span class="pl-2 pr-4">{{ item.number }}号</span>
+              <van-icon name="arrow" />
+            </div>
+            <van-empty v-if="!team.players.length" description="点击下方按钮添加球员" />
+          </div>
+          <div class="add-player-btn">
+            <i class="iconfont icon-renyuan-tianjia" @click="toPlayerAdd"></i>
+          </div>
+        </van-tab>
+        <van-tab title="参与赛事"> </van-tab>
+      </van-tabs>
     </div>
   </div>
 </template>
@@ -42,6 +60,9 @@ function onClickLeft() {
 function toEdit() {
   router.push(`/team/edit/${props.id}`)
 }
+function toPlayerAdd() {
+  router.push(`/player/add?teamId=${props.id}`)
+}
 
 const team = ref()
 
@@ -49,6 +70,11 @@ async function loadTeam() {
   team.value = await teamApi.getById(props.id)
 }
 loadTeam()
+const active = ref(0)
+
+function toEditPlayer(playerId: string) {
+  router.push(`/player/add?teamId=${props.id}&playerId=${playerId}`)
+}
 </script>
 
 <style lang="scss" scoped>
@@ -66,9 +92,24 @@ loadTeam()
     line-height: 1.5;
     padding-bottom: 5px;
   }
-  .team-desc {
-    font-size: 16px;
-    color: #a2a2a2;
+}
+.player-item {
+  display: flex;
+  padding: 10px 15px;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.add-player-btn {
+  position: fixed;
+  bottom: 10vh;
+  left: 50%;
+  transform: translateX(-50%);
+  .iconfont {
+    font-size: 36px;
+    color: #1989fa;
+    cursor: pointer;
   }
 }
 </style>

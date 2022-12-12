@@ -162,4 +162,5 @@ label {
 .main-bg{
   background-color: #f2f2f2;
   min-height: calc(100vh - 46px);
+  box-sizing: border-box;
 }

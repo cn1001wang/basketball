@@ -1,12 +1,23 @@
 <template>
   <div class="page-header">
-    <span>美国职业篮球联赛</span><van-icon name="setting-o" />
-    <van-icon name="plus" />
+    <div class="page-header-action"></div>
+    <div>设置</div>
+    <div class="page-header-action"></div>
   </div>
-  <van-tabs v-model:active="active">
-    <van-tab title="标签 1">内容 1</van-tab>
-    <van-tab title="标签 2">内容 2</van-tab>
-  </van-tabs>
+  <div class="main-bg">
+    <div class="py-4 px-4 d-flex ai-center bg-white">
+      <van-image
+        radius="10"
+        width="58px"
+        height="58px"
+        fit="cover"
+        src="https://ga-img.bytefly.cn/default-images/team-2.jpg"
+      />
+      <div class="pl-4">
+        <span>掌上篮球</span>
+      </div>
+    </div>
+  </div>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'

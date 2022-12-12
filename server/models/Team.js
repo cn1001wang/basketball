@@ -1,21 +1,22 @@
 const mongoose = require('mongoose')
 
-const schema = new mongoose.Schema({
-  name: { type: String, requried: true },
-  logo: { type: String },
-  contactPerson: { type: String },
-  contactPhone: { type: String },
-  players: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'Player' }],
-  // players: [
-  //   {
-  //     name: String,
-  //     number: String,
-  //     avatar: String,
-  //     height: String,
-  //     weight: String,
-  //     position: String,
-  //   },
-  // ],
+const schema = new mongoose.Schema(
+  {
+    name: { type: String, requried: true },
+    logo: { type: String },
+    contactPerson: { type: String },
+    contactPhone: { type: String },
+  },
+  {
+    toJSON: { virtuals: true }, // 转换成 JSON 时加入虚拟字段
+  }
+)
+
+schema.virtual('players', {
+  localField: '_id',
+  foreignField: 'teamId',
+  justOne: false,
+  ref: 'Player',
 })
 
 module.exports = mongoose.model('Team', schema)
