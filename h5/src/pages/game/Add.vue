@@ -8,23 +8,17 @@
     @click-right="onSubmit"
   />
   <div class="main-bg">
-    <div class="bg-white py-4 mb-4">
+    <div class="bg-light-f2 py-4 mb-4">
       <p class="text-center py-2 fs-xl">{{ props.matchName }}</p>
       <div class="d-flex jc-between ai-center">
         <div class="d-flex pl-3">
-          <div class="text-center pr-3 pl-4">
-            <van-icon name="add-o" size="36" color="#ababab" />
-            <p>选择球队</p>
-          </div>
-          <i class="iconfont icon-Jersey"></i>
+          <team-chose v-model="form.teama"></team-chose>
+          <jersey-chose v-model="form.teamaColor"></jersey-chose>
         </div>
         <div class="fs-xxl">VS</div>
         <div class="d-flex pr-2">
-          <i class="iconfont icon-Jersey"></i>
-          <div class="text-center pr-4 pl-3">
-            <van-icon name="add-o" size="36" color="#ababab" />
-            <p>选择球队</p>
-          </div>
+          <jersey-chose v-model="form.teambColor"></jersey-chose>
+          <team-chose v-model="form.teamb"></team-chose>
         </div>
       </div>
     </div>
@@ -95,6 +89,8 @@ import { matchApi } from '@/service/api/index.js'
 import { showToast } from 'vant'
 import dayjs from 'dayjs'
 import 'vant/es/toast/style'
+import TeamChose from './components/TeamChose.vue'
+import JerseyChose from './components/JerseyChose.vue'
 
 const props = defineProps({
   matchId: String,
@@ -110,6 +106,8 @@ const form = reactive({
   place: '1',
   teama: '',
   teamb: '',
+  teamaColor:"",
+  teambColor:"",
 })
 const rule = ref(['1'])
 const place = ref(['1'])
@@ -160,8 +158,9 @@ async function onSubmit() {
 }
 </script>
 <style lang="scss">
-.icon-Jersey {
+.icon-jersey {
   font-size: 32px;
   margin-top: 12px;
+  color: #a1a1a1;
 }
 </style>

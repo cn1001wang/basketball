@@ -1,0 +1,105 @@
+<!--  -->
+
+<template>
+  <div class="text-center pr-3 pl-4" @click="openTeamChose()">
+    <teamplate v-if="!modelValue">
+      <van-icon name="add-o" size="36" color="#ababab" />
+      <p class="chose-team-name">选择球队</p>
+    </teamplate>
+    <teamplate v-else>
+      <van-image
+        width="36"
+        height="36"
+        fit="cover"
+        radius="8"
+        :src="
+          activeTeam.logo ||
+          'https://itianwangmlmw.oss-cn-shanghai.aliyuncs.com/cdn/outsource/basketball/logo.png'
+        "
+      />
+      <p class="chose-team-name">{{ activeTeam.name }}</p>
+    </teamplate>
+  </div>
+  <van-popup v-model:show="teamVisible" closeable position="bottom" :style="{ height: '80%' }">
+    <div class="text-center" style="line-height: 52px">选择球队</div>
+    <div>
+      <div
+        v-for="team in teams"
+        :key="team.id"
+        class="team-item"
+        @click="teamActionClick(team._id)"
+      >
+        <van-image
+          width="40"
+          height="40"
+          fit="cover"
+          radius="8"
+          :src="
+            team.logo ||
+            'https://itianwangmlmw.oss-cn-shanghai.aliyuncs.com/cdn/outsource/basketball/logo.png'
+          "
+        />
+        <div class="flex-1 ml-4">
+          <p class="team-name">{{ team.name }}</p>
+          <p class="team-desc">队员：{{ team.players ? team.players.length : 0 }}</p>
+        </div>
+      </div>
+    </div>
+  </van-popup>
+</template>
+<script setup lang="ts">
+import { ref, defineProps, computed, defineEmits } from 'vue'
+import { teamApi } from '@/service/api/index.js'
+
+const emit = defineEmits<{
+  (e: 'update:modelValue', teamId: string): void
+}>()
+
+const props = defineProps({
+  modelValue: String,
+})
+
+const teams = ref()
+;(function () {
+  teamApi.get().then((res) => {
+    teams.value = res
+  })
+})()
+const teamVisible = ref(false)
+const activeTeam = computed(() =>
+  teams ? teams.value.find((o: any) => o._id === props.modelValue) : null
+)
+function openTeamChose() {
+  teamVisible.value = true
+}
+function teamActionClick(teamId: string) {
+  emit('update:modelValue', teamId)
+  teamVisible.value = false
+}
+</script>
+<style lang="scss" scoped>
+.team-item {
+  padding: 10px 20px;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #ddd;
+  margin-bottom: 5px;
+  .team-name {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+    padding-bottom: 5px;
+  }
+  .team-desc {
+    color: #999;
+    font-size: 14px;
+  }
+}
+.chose-team-name {
+  width: 4em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+</style>
