@@ -58,7 +58,7 @@
 import router from '@/router'
 import { playerApi } from '@/service/api'
 import { showToast } from 'vant/lib/toast'
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref, computed, defineProps } from 'vue'
 
 const props = defineProps({
   teamId: String,
@@ -119,7 +119,7 @@ async function onSubmit() {
     return showToast({ type: 'fail', message: '请输入队员名号码' })
   }
   if (props.playerId) {
-    var res = await playerApi.update(props.playerId,form)
+    var res = await playerApi.update(props.playerId, form)
   } else {
     var res = await playerApi.save(form)
   }

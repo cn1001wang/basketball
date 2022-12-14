@@ -2,23 +2,14 @@
 
 <template>
   <div class="text-center pr-3 pl-4" @click="openTeamChose()">
-    <teamplate v-if="!modelValue">
+    <template v-if="!modelValue">
       <van-icon name="add-o" size="36" color="#ababab" />
       <p class="chose-team-name">选择球队</p>
-    </teamplate>
-    <teamplate v-else>
-      <van-image
-        width="36"
-        height="36"
-        fit="cover"
-        radius="8"
-        :src="
-          activeTeam.logo ||
-          'https://itianwangmlmw.oss-cn-shanghai.aliyuncs.com/cdn/outsource/basketball/logo.png'
-        "
-      />
+    </template>
+    <template v-else>
+      <team-logo size="36" radius="8" :logo="activeTeam.logo"></team-logo>
       <p class="chose-team-name">{{ activeTeam.name }}</p>
-    </teamplate>
+    </template>
   </div>
   <van-popup v-model:show="teamVisible" closeable position="bottom" :style="{ height: '80%' }">
     <div class="text-center" style="line-height: 52px">选择球队</div>
@@ -27,7 +18,7 @@
         v-for="team in teams"
         :key="team.id"
         class="team-item"
-        @click="teamActionClick(team._id)"
+        @click="teamActionClick(team)"
       >
         <van-image
           width="40"
@@ -53,10 +44,12 @@ import { teamApi } from '@/service/api/index.js'
 
 const emit = defineEmits<{
   (e: 'update:modelValue', teamId: string): void
+  (e: 'update:name', name: string): void
 }>()
 
 const props = defineProps({
   modelValue: String,
+  name:String,
 })
 
 const teams = ref()
@@ -67,13 +60,14 @@ const teams = ref()
 })()
 const teamVisible = ref(false)
 const activeTeam = computed(() =>
-  teams ? teams.value.find((o: any) => o._id === props.modelValue) : null
+  teams.value ? teams.value.find((o: any) => o._id === props.modelValue) : {}
 )
 function openTeamChose() {
   teamVisible.value = true
 }
-function teamActionClick(teamId: string) {
-  emit('update:modelValue', teamId)
+function teamActionClick(team: any) {
+  emit('update:modelValue', team._id)
+  emit('update:name', team.name)
   teamVisible.value = false
 }
 </script>

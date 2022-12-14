@@ -7,18 +7,18 @@
     @click-left="onClickLeft"
     @click-right="onSubmit"
   />
-  <div class="main-bg">
+  <div v-if="tick == 0" class="main-bg">
     <div class="bg-light-f2 py-4 mb-4">
       <p class="text-center py-2 fs-xl">{{ props.matchName }}</p>
       <div class="d-flex jc-between ai-center">
         <div class="d-flex pl-3">
-          <team-chose v-model="form.teama"></team-chose>
-          <jersey-chose v-model="form.teamaColor"></jersey-chose>
+          <team-chose v-model="form.teama.id" v-model:name="form.teama.name"></team-chose>
+          <jersey-chose v-model="form.teama.color"></jersey-chose>
         </div>
         <div class="fs-xxl">VS</div>
         <div class="d-flex pr-2">
-          <jersey-chose v-model="form.teambColor"></jersey-chose>
-          <team-chose v-model="form.teamb"></team-chose>
+          <jersey-chose v-model="form.teamb.color"></jersey-chose>
+          <team-chose v-model="form.teamb.id" v-model:name="form.teamb.name"></team-chose>
         </div>
       </div>
     </div>
@@ -81,16 +81,22 @@
       </van-cell-group>
     </div>
   </div>
+  <div v-else class="main-bg">
+    <player-chose v-model:activePlayers="form.teama.activePlayers" v-model:lineup="form.teama.lineup" :team="form.teama" isTeama></player-chose>
+    <div class="py-2"></div>
+    <player-chose v-model:activePlayers="form.teamb.activePlayers" v-model:lineup="form.teamb.lineup" :team="form.teamb"></player-chose>
+  </div>
 </template>
 <script setup lang="ts">
 import router from '@/router'
 import { reactive, ref, defineProps, computed } from 'vue'
-import { matchApi } from '@/service/api/index.js'
+import { gameApi } from '@/service/api/index.js'
 import { showToast } from 'vant'
 import dayjs from 'dayjs'
 import 'vant/es/toast/style'
 import TeamChose from './components/TeamChose.vue'
 import JerseyChose from './components/JerseyChose.vue'
+import PlayerChose from './components/PlayerChose.vue'
 
 const props = defineProps({
   matchId: String,
@@ -104,10 +110,20 @@ const form = reactive({
   dateTime: dayjs().format('YYYY-MM-DD HH:mm'),
   rule: '1',
   place: '1',
-  teama: '',
-  teamb: '',
-  teamaColor:"",
-  teambColor:"",
+  teama: {
+    id: '',
+    name: '',
+    color: '',
+    activePlayers: [],
+    lineup: [],
+  },
+  teamb: {
+    id: '',
+    name: '',
+    color: '',
+    activePlayers: [],
+    lineup: [],
+  },
 })
 const rule = ref(['1'])
 const place = ref(['1'])
@@ -140,21 +156,25 @@ function onPlaceConfirm({ selectedValues }: { selectedValues: Array<string> }) {
 }
 
 function onClickLeft() {
-  router.back()
+  if (tick.value == 0) {
+    router.back()
+  } else {
+    tick.value = 0
+  }
 }
 async function onSubmit() {
   // 第一步
   if (tick.value == 0) {
-    if (!form.teama || !form.teamb) {
+    if (!form.teama.id || !form.teamb.id) {
       return showToast({ type: 'fail', message: '请选择比赛队伍' })
     }
     tick.value = 1
   } else {
-  }
-  var res = await matchApi.saveMatch(form)
+    var res = await gameApi.save(form)
 
-  showToast({ type: 'success', message: '创建成功！' })
-  router.back()
+    showToast({ type: 'success', message: '创建成功！' })
+    router.back()
+  }
 }
 </script>
 <style lang="scss">

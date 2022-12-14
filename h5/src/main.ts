@@ -11,6 +11,9 @@ import './lib/iconfont/iconfont.css'
 
 const app = createApp(App)
 
+import TeamLogo from './components/TeamLogo.vue'
+app.component("team-logo", TeamLogo)
+
 app.use(router)
 
 app.use(createPinia())
