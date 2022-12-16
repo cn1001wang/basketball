@@ -1,6 +1,6 @@
 <!--  -->
 <template>
-  <div>
+  <div v-if="players.length">
     <p class="team-title">
       {{ isTeama ? '主' : '客' }}队球员（出场{{ team.lineup.length }}人｜首发
       {{ team.activePlayers.length }}人）
@@ -17,7 +17,9 @@
       <span>{{ getPlayerById(player).name }}</span>
       <div class="flex-1"></div>
       <div class="text-grey">{{ getPostionByCode(getPlayerById(player).position) }}</div>
-      <div class="text-grey ml-4" :class="[lineup.includes(player)?'text-success':'text-grey']">{{ lineup.includes(player) ? '首发' : '出场' }}</div>
+      <div class="text-grey ml-4" :class="[lineup.includes(player) ? 'text-success' : 'text-grey']">
+        {{ lineup.includes(player) ? '首发' : '出场' }}
+      </div>
     </div>
   </div>
   <van-popup v-model:show="choseVisible" round :style="{ height: '80%' }" position="bottom">
@@ -64,6 +66,7 @@
 
 <script setup lang="ts">
 import { teamApi } from '@/service/api'
+import { showToast } from 'vant'
 import { defineProps, defineEmits, ref, Ref } from 'vue'
 
 const positionList = [
@@ -94,19 +97,20 @@ const players: Ref<any[]> = ref([])
 ;(async () => {
   let res: any = await teamApi.getById(props.team.id)
   players.value = res.players
+  console.log(players.value)
 })()
 function getPlayerById(playerId: any) {
   return players.value.find((o) => o._id === playerId)
 }
 function handleActiveClick(player: any) {
-  let players = [...props.lineup]
+  let lineup = [...props.lineup]
   let activePlayers = [...props.activePlayers]
   if (activePlayers.includes(player._id)) {
     activePlayers = activePlayers.filter((id: any) => id !== player._id)
     // 首发球员不出场，直接删掉首发
-    if (players.includes(player._id)) {
-      players = players.filter((id: any) => id !== player._id)
-      emit('update:lineup', players)
+    if (lineup.includes(player._id)) {
+      lineup = lineup.filter((id: any) => id !== player._id)
+      emit('update:lineup', lineup)
     }
   } else {
     activePlayers.push(player._id)
@@ -114,20 +118,24 @@ function handleActiveClick(player: any) {
   emit('update:activePlayers', activePlayers)
 }
 function handleLineupClick(player: any) {
-  let players = [...props.lineup]
+  let lineup = [...props.lineup]
   let activePlayers = [...props.activePlayers]
-  if (players.includes(player._id)) {
-    players = players.filter((id: any) => id !== player._id)
+  console.log(lineup.length)
+  if (lineup.length == 5) {
+    return showToast({ type: 'fail', message: '每队首发最多5名球员' })
+  }
+  if (lineup.includes(player._id)) {
+    lineup = lineup.filter((id: any) => id !== player._id)
     // activePlayers = activePlayers.filter((id: any) => id !== player._id)
   } else {
-    players.push(player._id)
+    lineup.push(player._id)
     // 首发不球员未出场时，自动出场
     if (!activePlayers.includes(player._id)) {
       activePlayers.push(player._id)
       emit('update:activePlayers', activePlayers)
     }
   }
-  emit('update:lineup', players)
+  emit('update:lineup', lineup)
 }
 </script>
 

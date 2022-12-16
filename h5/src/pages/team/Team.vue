@@ -29,6 +29,7 @@
         </div>
       </li>
     </ul>
+    <van-empty v-if="!teamData||!teamData.length" description="暂无球队" />
   </div>
 </template>
 <script setup lang="ts">

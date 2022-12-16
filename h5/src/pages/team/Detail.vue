@@ -58,7 +58,7 @@ function onClickLeft() {
   router.back()
 }
 function toEdit() {
-  router.push(`/team/edit/${props.id}`)
+  router.push(`/team/edit?teamId=${props.id}`)
 }
 function toPlayerAdd() {
   router.push(`/player/add?teamId=${props.id}`)

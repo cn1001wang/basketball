@@ -21,6 +21,7 @@ const schema = new mongoose.Schema({
   player: { type: mongoose.SchemaTypes.ObjectId, ref: 'Player' },
   quarter: { type: Number },
   time: { type: String },
+  creatorUserId: { type: mongoose.SchemaTypes.ObjectId, ref: 'User' },
 })
 
 module.exports = mongoose.model('GameEvent', schema)

@@ -14,12 +14,7 @@
   <van-popup v-model:show="teamVisible" closeable position="bottom" :style="{ height: '80%' }">
     <div class="text-center" style="line-height: 52px">选择球队</div>
     <div>
-      <div
-        v-for="team in teams"
-        :key="team.id"
-        class="team-item"
-        @click="teamActionClick(team)"
-      >
+      <div v-for="team in teams" :key="team.id" class="team-item" @click="teamActionClick(team)">
         <van-image
           width="40"
           height="40"
@@ -45,11 +40,12 @@ import { teamApi } from '@/service/api/index.js'
 const emit = defineEmits<{
   (e: 'update:modelValue', teamId: string): void
   (e: 'update:name', name: string): void
+  (e: 'change', team: any): void
 }>()
 
 const props = defineProps({
   modelValue: String,
-  name:String,
+  name: String,
 })
 
 const teams = ref()
@@ -68,6 +64,7 @@ function openTeamChose() {
 function teamActionClick(team: any) {
   emit('update:modelValue', team._id)
   emit('update:name', team.name)
+  emit('change', team)
   teamVisible.value = false
 }
 </script>

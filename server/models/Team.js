@@ -6,6 +6,7 @@ const schema = new mongoose.Schema(
     logo: { type: String },
     contactPerson: { type: String },
     contactPhone: { type: String },
+    creatorUserId: { type: mongoose.SchemaTypes.ObjectId, ref: 'User' },
   },
   {
     toJSON: { virtuals: true }, // 转换成 JSON 时加入虚拟字段

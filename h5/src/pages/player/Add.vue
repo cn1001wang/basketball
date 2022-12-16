@@ -19,6 +19,8 @@
         type="number"
       />
       <van-field v-model="form.logo" name="playerLogo" label="头像" placeholder="请输入头像" />
+      <van-field v-model="form.height" name="height" label="身高" placeholder="请输入身高" />
+      <van-field v-model="form.weight" name="weight" label="体重" placeholder="请输入体重" />
 
       <van-field name="caption" label="是否队长">
         <template #input>

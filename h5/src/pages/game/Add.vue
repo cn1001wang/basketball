@@ -7,18 +7,26 @@
     @click-left="onClickLeft"
     @click-right="onSubmit"
   />
-  <div v-if="tick == 0" class="main-bg">
+  <div v-show="tick == 0" class="main-bg">
     <div class="bg-light-f2 py-4 mb-4">
       <p class="text-center py-2 fs-xl">{{ props.matchName }}</p>
       <div class="d-flex jc-between ai-center">
         <div class="d-flex pl-3">
-          <team-chose v-model="form.teama.id" v-model:name="form.teama.name"></team-chose>
+          <team-chose
+            v-model="form.teama.id"
+            v-model:name="form.teama.name"
+            @change="handleTeamaChange"
+          ></team-chose>
           <jersey-chose v-model="form.teama.color"></jersey-chose>
         </div>
         <div class="fs-xxl">VS</div>
         <div class="d-flex pr-2">
           <jersey-chose v-model="form.teamb.color"></jersey-chose>
-          <team-chose v-model="form.teamb.id" v-model:name="form.teamb.name"></team-chose>
+          <team-chose
+            v-model="form.teamb.id"
+            v-model:name="form.teamb.name"
+            @change="handleTeambChange"
+          ></team-chose>
         </div>
       </div>
     </div>
@@ -61,36 +69,29 @@
             @cancel="rulePickerVisible = false"
           />
         </van-popup>
-        <van-field
-          :model-value="activePlaceName"
-          is-link
-          readonly
-          name="rule"
-          label="比赛场地"
-          placeholder="选择场地"
-          @click="placePickerVisible = true"
-        />
-        <van-popup v-model:show="placePickerVisible" position="bottom">
-          <van-picker
-            v-model="place"
-            :columns="placeColumns"
-            @confirm="onPlaceConfirm"
-            @cancel="placePickerVisible = false"
-          />
-        </van-popup>
+        <van-field v-model="form.place" label="比赛场地" placeholder="请输入场地" />
       </van-cell-group>
     </div>
   </div>
-  <div v-else class="main-bg">
-    <player-chose v-model:activePlayers="form.teama.activePlayers" v-model:lineup="form.teama.lineup" :team="form.teama" isTeama></player-chose>
+  <div v-if="tick == 1" class="main-bg">
+    <player-chose
+      v-model:activePlayers="form.teama.activePlayers"
+      v-model:lineup="form.teama.lineup"
+      :team="form.teama"
+      isTeama
+    ></player-chose>
     <div class="py-2"></div>
-    <player-chose v-model:activePlayers="form.teamb.activePlayers" v-model:lineup="form.teamb.lineup" :team="form.teamb"></player-chose>
+    <player-chose
+      v-model:activePlayers="form.teamb.activePlayers"
+      v-model:lineup="form.teamb.lineup"
+      :team="form.teamb"
+    ></player-chose>
   </div>
 </template>
 <script setup lang="ts">
 import router from '@/router'
-import { reactive, ref, defineProps, computed } from 'vue'
-import { gameApi } from '@/service/api/index.js'
+import { reactive, ref, defineProps, computed, Ref } from 'vue'
+import { gameApi, ruleApi } from '@/service/api/index.js'
 import { showToast } from 'vant'
 import dayjs from 'dayjs'
 import 'vant/es/toast/style'
@@ -108,14 +109,15 @@ let now = dayjs()
 const form = reactive({
   match: props.matchId,
   dateTime: dayjs().format('YYYY-MM-DD HH:mm'),
-  rule: '1',
-  place: '1',
+  rule: '',
+  place: '',
   teama: {
     id: '',
     name: '',
     color: '',
     activePlayers: [],
     lineup: [],
+    players: [],
   },
   teamb: {
     id: '',
@@ -123,36 +125,46 @@ const form = reactive({
     color: '',
     activePlayers: [],
     lineup: [],
+    players: [],
   },
 })
 const rule = ref(['1'])
-const place = ref(['1'])
 const currentDate = ref([now.format('YYYY'), now.format('MM'), now.format('DD')])
 const currentTime = ref([now.format('HH'), now.format('mm')])
-const ruleColumns = reactive([
-  { text: 'FIBA正式比赛规则', value: '1' },
-  { text: '抢分模式（单节）', value: '2' },
-  { text: '抢分模式（累计）', value: '3' },
-])
-const activeRuleName = computed(() => ruleColumns.find((o) => o.value === form.rule)?.text)
-const placeColumns = reactive([
-  { text: '浙江大学紫金港校区篮球馆', value: '1' },
-  { text: '深圳大学篮球馆', value: '2' },
-])
-const activePlaceName = computed(() => placeColumns.find((o) => o.value === form.place)?.text)
+const ruleColumns: Ref<any> = ref([])
+
+const activeRuleName = computed(
+  () => ruleColumns.value.find((o: any) => o.value === form.rule)?.text
+)
 
 const timePickerVisible = ref(false)
 const rulePickerVisible = ref(false)
-const placePickerVisible = ref(false)
+
+;(async () => {
+  let res: any = await ruleApi.get()
+  ruleColumns.value = res.map((o: any) => {
+    return {
+      text: o.name,
+      value: o._id,
+    }
+  })
+  form.rule=res[0]._id
+})()
 
 function onTimeConfirm() {}
 function onRuleConfirm({ selectedValues }: { selectedValues: Array<string> }) {
   form.rule = selectedValues[0]
   rulePickerVisible.value = false
 }
-function onPlaceConfirm({ selectedValues }: { selectedValues: Array<string> }) {
-  form.place = selectedValues[0]
-  placePickerVisible.value = false
+function handleTeamaChange(team: any) {
+  form.teama.activePlayers = team.players.map((o: any) => o._id)
+  form.teama.lineup = team.players.slice(0, 5).map((o: any) => o._id)
+  form.teama.players = team.players
+}
+function handleTeambChange(team: any) {
+  form.teamb.activePlayers = team.players.map((o: any) => o._id)
+  form.teamb.lineup = team.players.slice(0, 5).map((o: any) => o._id)
+  form.teamb.players = team.players
 }
 
 function onClickLeft() {

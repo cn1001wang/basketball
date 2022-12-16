@@ -2,8 +2,8 @@
 import http from '@/service/http'
 
 const gameApi = {
-  async get() {
-    return await http.get(`/rest/games`)
+  async getByMatchId(matchId) {
+    return await http.get(`/rest/games/get?matchId=${matchId}`)
   },
   async getById(id) {
     return await http.get(`/rest/games/${id}`)

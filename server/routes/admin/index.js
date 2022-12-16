@@ -2,9 +2,11 @@ module.exports = (app) => {
   const express = require('express')
   const assert = require('http-assert')
   const jwt = require('jsonwebtoken')
-  const AdminUser = require('../../models/AdminUser')
+  const User = require('../../models/User')
   const rest = require('./rest.js')
+  const initApp = require('./init.js')
   rest(app)
+  initApp(app)
 
   const multer = require('multer')
   const MAO = require('multer-aliyun-oss')
@@ -25,20 +27,11 @@ module.exports = (app) => {
     res.send(file)
   })
 
-  app.get('/admin/api/userInit', async (req, res) => {
-    var modal = require(`../../models/AdminUser`)
-    await modal.deleteMany({})
-    var user = { username: 'admin', password: '123456' }
-    await modal.create(user)
-
-    res.send(user)
-  })
-
   app.post('/admin/api/login', async (req, res) => {
     const { username, password } = req.body
     // 1.根据用户名找用户
 
-    const user = await AdminUser.findOne({ username }).select('+password')
+    const user = await User.findOne({ username }).select('+password')
     assert(user, 422, '用户不存在')
     // 2.校验密码
     const isValid = require('bcrypt').compareSync(password, user.password)

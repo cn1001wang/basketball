@@ -12,6 +12,7 @@
       <van-icon v-if="data.activeMatch" name="plus" size="22" @click="openAdd" />
     </div>
   </div>
+  <!-- <van-empty v-if="!data.activeMatch" description="暂无比赛记录" /> -->
   <div class="text-center">
     <p class="date-p">2022-12</p>
     <div>
@@ -84,14 +85,14 @@
 </template>
 <script setup>
 import { ref, reactive } from 'vue'
-import { matchApi } from '@/service/api/index.js'
+import { matchApi, gameApi } from '@/service/api/index.js'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const addVisible = ref(false)
 const addActions = [{ name: '创建新比赛' }, { name: '添加比赛结果' }, { name: '创建队内赛' }]
 function actionClick(item) {
-  let match=data.activeMatch
+  let match = data.activeMatch
   router.push(`/game/add?matchId=${match._id}&matchName=${match.name}`)
 }
 
@@ -108,8 +109,8 @@ const matches = ref([])
 const data = reactive({
   activeMatch: null,
 })
-function loadMatches() {
-  matchApi.getMatches().then((res) => {
+async function loadMatches() {
+  await matchApi.getMatches().then((res) => {
     matches.value = res
     if (res.length === 0) {
       matchListVisible.value = true
@@ -118,7 +119,12 @@ function loadMatches() {
     }
   })
 }
-loadMatches()
+;(async () => {
+  await loadMatches()
+  if (data.activeMatch) {
+    let res = await gameApi.getByMatchId(data.activeMatch._id)
+  }
+})()
 
 function toMatchAdd() {
   router.push('/match/add')

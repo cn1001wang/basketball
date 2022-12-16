@@ -15,6 +15,7 @@ const schema = new mongoose.Schema(
     age: { type: String },
     remarks: { type: String },
     teamId: { type: mongoose.SchemaTypes.ObjectId, ref: 'Team' },
+    creatorUserId: { type: mongoose.SchemaTypes.ObjectId, ref: 'User' },
   },
   {
     toJSON: { virtuals: true }, // 转换成 JSON 时加入虚拟字段

@@ -49,6 +49,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/team/Add.vue'),
   },
   {
+    path: '/team/edit',
+    name: 'TeamEdit',
+    component: () => import('@/pages/team/Add.vue'),
+    props: (route) => ({ teamId: route.query.teamId }),
+  },
+  {
     path: '/team/detail/:id',
     name: 'TeamDetail',
     component: () => import('@/pages/team/Detail.vue'),

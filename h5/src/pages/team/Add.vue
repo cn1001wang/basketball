@@ -31,14 +31,29 @@
 import router from '@/router'
 import { teamApi } from '@/service/api'
 import { showToast } from 'vant/lib/toast'
-import { reactive } from 'vue'
+import { reactive, defineProps } from 'vue'
+
+const props = defineProps({
+  teamId: String,
+})
 
 const form = reactive({
+  _id: null,
   name: '',
   logo: '',
   contactPerson: '',
   contactPhone: '',
 })
+;(async () => {
+  if (props.teamId) {
+    let res: any = await teamApi.getById(props.teamId)
+    form.name = res.name
+    form.logo = res.name
+    form.contactPerson = res.contactPerson
+    form.contactPhone = res.contactPhone
+    form._id = res._id
+  }
+})()
 
 function onClickLeft() {
   router.back()
@@ -47,10 +62,14 @@ async function onSubmit() {
   if (!form.name) {
     return showToast({ type: 'fail', message: '请输入队伍名' })
   }
+  if (props.teamId) {
+    var res = await teamApi.update(form._id, form)
+    showToast({ type: 'success', message: '修改成功！' })
+  } else {
+    var res = await teamApi.save(form)
+    showToast({ type: 'success', message: '创建成功！' })
+  }
 
-  var res = await teamApi.save(form)
-
-  showToast({ type: 'success', message: '创建成功！' })
   router.back()
 }
 </script>
