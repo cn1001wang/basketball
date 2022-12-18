@@ -13,25 +13,18 @@
     </div>
   </div>
   <van-empty v-if="!data.activeMatch" description="暂无赛事记录" />
+  <van-empty v-if="!games.length" description="暂无比赛记录" />
   <div class="text-center">
-    <p class="date-p">2022-12</p>
-    <div>
-      <van-empty v-if="!games.length" description="暂无比赛记录" />
-      <van-swipe-cell v-for="game in games" :key="game._id">
+    <div v-for="game in games" :key="game._id">
+      <p v-if="isFirstMonth(game)" class="date-p">{{ formatMonth(game.dateTime) }}</p>
+      <van-swipe-cell class="game-cell" @click="toAction(game)">
         <div class="d-flex ai-center game-list-item">
           <div class="team-avatar-item">
-            <van-image
-              class="team-logo"
-              round
-              width="58px"
-              height="58px"
-              fit="cover"
-              src="https://ga-img.bytefly.cn/default-images/team-2.jpg"
-            />
+            <team-logo size="58" round :logo="game.teama.team.logo" class="team-logo"></team-logo>
             <div class="text-black pt-1">{{ game.teama.team.name }}</div>
           </div>
           <div class="flex-1">
-            <p>{{ game.dateTime }}</p>
+            <p>{{ formatDate(game.dateTime) }}</p>
             <div class="score-wrap">
               <span class="score-span">{{ game.teama.source || 0 }}</span>
               <span>-</span>
@@ -43,15 +36,8 @@
             <div class="text-grey">{{ game.place }}</div>
           </div>
           <div class="team-avatar-item">
-            <van-image
-              class="team-logo"
-              round
-              width="58px"
-              height="58px"
-              fit="cover"
-              src="https://ga-img.bytefly.cn/default-images/team-1.jpg"
-            />
-            <div class="text-black pt-1">{{ game.teama.team.name }}</div>
+            <team-logo size="58" round :logo="game.teamb.team.logo" class="team-logo"></team-logo>
+            <div class="text-black pt-1">{{ game.teamb.team.name }}</div>
           </div>
         </div>
         <template #right>
@@ -88,6 +74,7 @@
 import { ref, reactive } from 'vue'
 import { matchApi, gameApi } from '@/service/api/index.js'
 import { useRouter } from 'vue-router'
+import dayjs from 'dayjs'
 const router = useRouter()
 
 const addVisible = ref(false)
@@ -137,6 +124,29 @@ async function removeMatch(match) {
   loadMatches()
   alert('删除成功')
 }
+
+function formatDate(time) {
+  if (!time) return ''
+  time = dayjs(time)
+  let nowYear = new Date().getFullYear()
+  if (nowYear === time.year()) return time.format('MM月DD日 HH:mm')
+  return time.format('YYYY-MM-DD HH:mm')
+}
+function formatMonth(time) {
+  return dayjs(time).format('YYYY-MM')
+}
+// 是否是这个月第一条
+function isFirstMonth(game) {
+  let month = formatMonth(game.dateTime)
+  let toMonthArr = games.value.filter((o) => formatMonth(o.dateTime) === month)
+  if (!game || !toMonthArr.length) return
+  return toMonthArr[0]._id === game._id
+}
+
+// 跳转到比赛页
+function toAction(game){
+  router.push(`/game/action?id=${game._id}`)
+}
 </script>
 <style lang="scss">
 .game-list-wrap {
@@ -162,7 +172,7 @@ async function removeMatch(match) {
 .date-p {
   font-size: 16px;
   color: #787878;
-  padding: 10px 0;
+  padding: 10px 0 5px;
   // font-weight: bold;
 }
 .game-list-item {
@@ -174,13 +184,13 @@ async function removeMatch(match) {
 .delete-button {
   height: 100%;
 }
-.team-logo {
-  border: 1px solid #b2b2b2;
-  background-color: #dee6e9;
-}
 .score-wrap {
   padding: 4px 0;
   font-size: 24px;
   color: #000;
+}
+.game-cell{
+  border-bottom: 1px solid #e2e2e2;
+  padding: 10px 0 5px;
 }
 </style>

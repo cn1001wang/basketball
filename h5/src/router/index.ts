@@ -15,7 +15,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'game',
         name: 'game',
-        component: () => import('@/pages/game/Game.vue'),
+        component: () => import('@/pages/game/List.vue'),
         meta: { tab: 0 },
       },
       {
@@ -65,6 +65,12 @@ const routes: RouteRecordRaw[] = [
     name: 'PlayerAdd',
     component: () => import('@/pages/player/Add.vue'),
     props: (route) => ({ teamId: route.query.teamId, playerId: route.query.playerId }),
+  },
+  {
+    path: '/game/action',
+    name: 'GameAction',
+    component: () => import('@/pages/game/Action.vue'),
+    props: (route) => ({ id: route.query.id,}),
   },
 ]
 

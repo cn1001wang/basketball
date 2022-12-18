@@ -26,9 +26,6 @@ const schema = new mongoose.Schema(
     status:{type:Number,default:0}// 0 进行中，1已结束
     // 结果
   },
-  {
-    toJSON: { virtuals: true }, // 转换成 JSON 时加入虚拟字段
-  }
 )
 
 // events
