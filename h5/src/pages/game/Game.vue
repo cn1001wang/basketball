@@ -12,11 +12,12 @@
       <van-icon v-if="data.activeMatch" name="plus" size="22" @click="openAdd" />
     </div>
   </div>
-  <!-- <van-empty v-if="!data.activeMatch" description="暂无比赛记录" /> -->
+  <van-empty v-if="!data.activeMatch" description="暂无赛事记录" />
   <div class="text-center">
     <p class="date-p">2022-12</p>
     <div>
-      <van-swipe-cell>
+      <van-empty v-if="!games.length" description="暂无比赛记录" />
+      <van-swipe-cell v-for="game in games" :key="game._id">
         <div class="d-flex ai-center game-list-item">
           <div class="team-avatar-item">
             <van-image
@@ -27,19 +28,19 @@
               fit="cover"
               src="https://ga-img.bytefly.cn/default-images/team-2.jpg"
             />
-            <div class="text-black pt-1">勇士队</div>
+            <div class="text-black pt-1">{{ game.teama.team.name }}</div>
           </div>
           <div class="flex-1">
-            <p>12月5日 20:22</p>
+            <p>{{ game.dateTime }}</p>
             <div class="score-wrap">
-              <span class="score-span">23</span>
+              <span class="score-span">{{ game.teama.source || 0 }}</span>
               <span>-</span>
-              <span class="score-span">16</span>
+              <span class="score-span">{{ game.teamb.source || 0 }}</span>
             </div>
-            <div>
+            <div v-if="!game.status">
               <van-tag type="success" round>进行中</van-tag>
             </div>
-            <div class="text-grey">回浦中学篮球场</div>
+            <div class="text-grey">{{ game.place }}</div>
           </div>
           <div class="team-avatar-item">
             <van-image
@@ -50,7 +51,7 @@
               fit="cover"
               src="https://ga-img.bytefly.cn/default-images/team-1.jpg"
             />
-            <div class="text-black pt-1">骑士队</div>
+            <div class="text-black pt-1">{{ game.teama.team.name }}</div>
           </div>
         </div>
         <template #right>
@@ -119,10 +120,12 @@ async function loadMatches() {
     }
   })
 }
+const games = ref([])
 ;(async () => {
   await loadMatches()
   if (data.activeMatch) {
     let res = await gameApi.getByMatchId(data.activeMatch._id)
+    games.value = res
   }
 })()
 

@@ -29,6 +29,7 @@ const schema = new mongoose.Schema({
   // 每次暂停时间 秒
   pauseDuration: { type: Number, default: 60 },
   creatorUserId: { type: mongoose.SchemaTypes.ObjectId, ref: 'User' },
+  creationTime: { type: Date, default: Date.now },
 })
 
 module.exports = mongoose.model('Rule', schema)

@@ -5,6 +5,7 @@ const schema = new mongoose.Schema({
   logo: { type: String },
   teams: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'Team' }],
   creatorUserId: { type: mongoose.SchemaTypes.ObjectId, ref: 'User' },
+  creationTime: { type: Date, default: Date.now },
 })
 schema.virtual('games', {
   localField: '_id',

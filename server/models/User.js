@@ -12,6 +12,7 @@ const schema = new mongoose.Schema({
       return bcrypt.hashSync(val, salt)
     },
   },
+  creationTime: { type: Date, default: Date.now },
 })
 
 module.exports = mongoose.model("User", schema);
