@@ -5,7 +5,7 @@ const playerApi = {
     return await http.get(`/rest/players`)
   },
   async getById(id) {
-    return await http.get(`/rest/players/${id}`)
+    return await http.get(`/rest/players/getById/${id}`)
   },
   async save(data) {
     return await http.post(`/rest/players`, data)

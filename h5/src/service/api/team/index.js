@@ -6,7 +6,7 @@ const teamApi = {
     return await http.get(`/rest/teams`)
   },
   async getById(id) {
-    return await http.get(`/rest/teams/${id}`)
+    return await http.get(`/rest/teams/getById/${id}`)
   },
   async save(data) {
     return await http.post(`/rest/teams`, data)

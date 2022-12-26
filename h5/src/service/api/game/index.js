@@ -6,7 +6,7 @@ const gameApi = {
     return await http.get(`/rest/games?matchId=${matchId}`)
   },
   async getById(id) {
-    return await http.get(`/rest/games/${id}`)
+    return await http.get(`/rest/games/getById/${id}`)
   },
   async save(data) {
     return await http.post(`/rest/games`, data)

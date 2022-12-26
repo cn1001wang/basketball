@@ -1,6 +1,6 @@
 const express = require('express')
 const mongoose = require('mongoose')
-const { equal } = require('http-assert')
+const assert = require('http-assert')
 module.exports = function (app) {
   const router = express.Router({
     mergeParams: true,
@@ -46,20 +46,29 @@ module.exports = function (app) {
     res.send(items)
   })
   // 资源详情
-  router.get('/:id', async (req, res) => {
+  router.get('/getById/:id', async (req, res) => {
     const queryOptions = {}
     if (req.Model.modelName === 'Team') {
       queryOptions.populate = 'players'
     } else if (req.Model.modelName === 'Player') {
       queryOptions.populate = 'team'
     } else if (req.Model.modelName === 'Game') {
-      queryOptions.populate = 'teama.id teamb.id rule match events'
+      queryOptions.populate = 'teama.id teamb.id rule match events teama.activePlayers  teamb.activePlayers'
     }
     const model = await req.Model.findById(req.params.id)
       .where({
         creatorUserId: req.user._id,
       })
       .setOptions(queryOptions)
+    res.send(model)
+  })
+
+  router.get('/getEventsByGameId', async (req, res) => {
+    var ObjectId = mongoose.Types.ObjectId
+    assert(req.Model.modelName === 'GameEvent', 404, '错误地址')
+    const { gameId } = req.query
+    let model = await req.Model.find({gameId:ObjectId(gameId)}).populate('player')
+
     res.send(model)
   })
 

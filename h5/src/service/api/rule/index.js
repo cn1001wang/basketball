@@ -6,7 +6,7 @@ const ruleApi = {
     return await http.get(`/rest/rules`)
   },
   async getById(id) {
-    return await http.get(`/rest/rules/${id}`)
+    return await http.get(`/rest/rules/getById/${id}`)
   },
   async save(data) {
     return await http.post(`/rest/rules`, data)
