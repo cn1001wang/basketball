@@ -72,6 +72,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/game/Action.vue'),
     props: (route) => ({ id: route.query.id,}),
   },
+  {
+    path: '/game/result',
+    name: 'GameResult',
+    component: () => import('@/pages/game/Result.vue'),
+    props: (route) => ({ id: route.query.id,}),
+  },
 ]
 
 const router = createRouter({

@@ -15,7 +15,7 @@
           class="foul-dot"
           v-for="i in rule.personalFoulLimit + 1"
           :key="i"
-          :class="foulList[player._id] > i && 'foul-full-dot'"
+          :class="foulList[player._id] >= i && 'foul-full-dot'"
         ></div>
       </div>
       <span>{{ getScore(player._id) }}</span>
@@ -29,15 +29,28 @@ export default {
   props: {
     team: Object,
     rule: Object,
-    foulList: Object,
+    // foulList: Object,
     events: Array,
   },
   data() {
     return {}
   },
+  computed: {
+    foulList() {
+      let events = this.events.filter((o) =>
+        [gameEventType.犯规, gameEventType.技术犯规, gameEventType.违体犯规].includes(o.type)
+      )
+      let obj = {}
+
+      this.team.activePlayers.forEach((player) => {
+        obj[player._id] = events.filter((o) => o.player._id === player._id).length
+      })
+      return obj
+    },
+  },
   methods: {
     getScore(playerId) {
-      let teamEvents = this.events.filter((o) => o.player._id === playerId)
+      let teamEvents = this.events.filter((o) => o.player?._id === playerId)
       return (
         teamEvents.filter((o) => o.type === gameEventType.罚球).length +
         teamEvents.filter((o) => o.type === gameEventType.两分).length * 2 +

@@ -22,6 +22,7 @@ export default {
   props: {
     team: Object,
     events: Array,
+    game: Object,
   },
   data() {
     return {}

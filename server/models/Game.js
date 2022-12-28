@@ -31,7 +31,7 @@ const schema = new mongoose.Schema(
     // 进行到第几节
     section: { type: Number, default: 1 },
     // 进行到第几分钟
-    countdown: { type: String },
+    countdown: { type: Number },
   },
 )
 
