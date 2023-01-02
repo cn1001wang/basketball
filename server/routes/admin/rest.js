@@ -5,6 +5,60 @@ module.exports = function (app) {
   const router = express.Router({
     mergeParams: true,
   })
+  router.post('/endGame', async (req, res) => {
+    const gameEventType = require('../../enum/gameEventType.js')
+    assert(req.Model.modelName === 'Game', 404, '错误地址')
+
+    const Game = require('../../models/Game')
+    const { gameId } = req.query
+    //  teama.activePlayers  teamb.activePlayers
+    let game = await Game.findById(gameId).populate('teama.id teamb.id rule match events')
+    const events = game.events
+    function getScore(teamId) {
+      let teamEvents = events.filter((o) => o.teamId.equals(teamId))
+      return (
+        teamEvents.filter((o) => o.type === gameEventType.罚球).length +
+        teamEvents.filter((o) => o.type === gameEventType.两分).length * 2 +
+        teamEvents.filter((o) => o.type === gameEventType.三分).length * 3
+      )
+    }
+    function getFoulEvents(teamId) {
+      let teamEvents = game.events.filter((o) => o.teamId.equals(teamId))
+      return teamEvents.filter((o) =>
+        [gameEventType.犯规, gameEventType.技术犯规, gameEventType.违体犯规].includes(o.type)
+      ).length
+    }
+    function getSuspendEvents(teamId) {
+      let teamEvents = game.events.filter((o) => o.teamId.equals(teamId))
+
+      return teamEvents.filter((o) => [gameEventType.暂停].includes(o.type)).length
+    }
+
+    let obj = {
+      status: 1,
+      teama: {
+        id: game.teama.id._id,
+        color: game.teama.color,
+        activePlayers: game.teama.activePlayers,
+        lineup: game.teama.lineup,
+        score: getScore(game.teama.id._id),
+        foulCount: getFoulEvents(game.teama.id._id),
+        suspendCout: getSuspendEvents(game.teama.id._id),
+      },
+      teamb: {
+        id: game.teamb.id._id,
+        color: game.teamb.color,
+        activePlayers: game.teamb.activePlayers,
+        lineup: game.teamb.lineup,
+        score: getScore(game.teamb.id._id),
+        foulCount: getFoulEvents(game.teamb.id._id),
+        suspendCout: getSuspendEvents(game.teamb.id._id),
+      },
+    }
+    const model = await req.Model.findByIdAndUpdate(req.params.id, {place:"北大"})
+
+    res.send(obj)
+  })
 
   // 创建资源
   router.post('/', async (req, res) => {
@@ -32,7 +86,7 @@ module.exports = function (app) {
       },
     }
     if (req.Model.modelName === 'Team') {
-      queryOptions.populate = 'players'
+      queryOptions.populate = 'players agames bgames'
     } else if (req.Model.modelName === 'Rule') {
       const items = await req.Model.find({ $or: [{ creatorUserId: req.user._id }, { creatorUserId: null }] }).limit(100)
       res.send(items)
@@ -67,7 +121,7 @@ module.exports = function (app) {
     var ObjectId = mongoose.Types.ObjectId
     assert(req.Model.modelName === 'GameEvent', 404, '错误地址')
     const { gameId } = req.query
-    let model = await req.Model.find({gameId:ObjectId(gameId)}).populate('player')
+    let model = await req.Model.find({ gameId: ObjectId(gameId) }).populate('player')
 
     res.send(model)
   })

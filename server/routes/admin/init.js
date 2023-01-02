@@ -20,7 +20,7 @@ module.exports = function (app) {
       secondHalfPauseTime: 3,
       overtimePauseTime: 1,
       pauseDuration: 60,
-      creatorUserId:"639c82240c062a612110ab62"
+      // creatorUserId:"63b11fcef0950971e74edb50"
     }
     var data=await modal.create(rule)
     rule._id=data._id
@@ -30,8 +30,8 @@ module.exports = function (app) {
 
   app.get('/admin/api/init/user', async (req, res) => {
     var modal = require(`../../models/User`)
-    // await modal.deleteMany({})
-    var user = { username: 'user1', password: '123456' }
+    // await modal.deleteMany({}),_id:'63b11fcef0950971e74edb50' 
+    var user = { username: 'admin', password: '123456'}
     await modal.create(user)
 
     res.send(user)

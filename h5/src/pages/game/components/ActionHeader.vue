@@ -3,8 +3,12 @@
   <div class="action-header">
     <action-header-team :events="events" :team="game.teama.id" :game="game"></action-header-team>
     <div class="time-item">
-      <p>第{{ game.section }}节</p>
-      <p class="time-p" :class="rest&&'rest-time-p'">
+      <div class="d-flex jc-center ai-center">
+        第{{ rest ? game.section - 1 : game.section }}节
+        <p v-if="pause" class="rest-time-p">叫暂停中</p>
+        <p v-if="rest" class="rest-time-p">休息中</p>
+      </div>
+      <p class="time-p" :class="rest || (pause && 'rest-time-p')">
         <span class="cutdown-item">{{ curTime[0][0] }}</span>
         <span class="cutdown-item">{{ curTime[0][1] }}</span>
         <span>:</span>
@@ -20,7 +24,8 @@
 import ActionHeaderTeam from './ActionHeaderTeam.vue'
 export default {
   props: {
-    rest:Boolean,
+    rest: Boolean,
+    pause: Boolean,
     game: Object,
     curTime: Array,
     events: Array,
@@ -52,7 +57,7 @@ export default {
         display: inline-block;
       }
     }
-    .rest-time-p{
+    .rest-time-p {
       color: #a1a1a1;
     }
   }

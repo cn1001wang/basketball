@@ -36,7 +36,7 @@
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import { ref, watch } from 'vue'
-import { teamApi } from '@/service/api'
+import {  teamApi } from '@/service/api'
 
 function toTeam(id: string) {
   router.push(`/team/detail/${id}`)

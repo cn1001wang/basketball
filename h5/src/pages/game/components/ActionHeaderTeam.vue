@@ -29,10 +29,10 @@ export default {
   },
   computed: {
     score() {
-      return this.getScore(this.team.id)
+      return this.getScore(this.team._id)
     },
     foul() {
-      return this.getFoul(this.team.id).length
+      return this.getFoul(this.team._id).length
     },
   },
   methods: {
@@ -47,7 +47,7 @@ export default {
     getPause(teamId) {
       let teamEvents = this.events.filter((o) => o.teamId === teamId)
       return teamEvents.filter(
-        (o) => o.type === gameEventType.pause && o.quarter === this.game.section
+        (o) => o.type === gameEventType.暂停 && o.quarter === this.game.section
       ).length
     },
     getScore(teamId) {

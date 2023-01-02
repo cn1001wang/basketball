@@ -41,6 +41,7 @@ module.exports = (app) => {
     res.send({ token })
   })
 
+
   // 错误处理函数
   app.use(async (err, req, res, next) => {
     // console.log(err)

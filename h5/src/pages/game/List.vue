@@ -9,7 +9,7 @@
       <van-icon name="arrow-down" class="ml-2" />
     </div>
     <div class="page-header-action">
-      <van-icon v-if="data.activeMatch" name="plus" size="22" @click="openAdd" />
+      <van-icon v-if="data.activeMatch" name="plus" size="22" @click="actionClick" />
     </div>
   </div>
   <van-empty v-if="!data.activeMatch" description="暂无赛事记录" />

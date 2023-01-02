@@ -17,6 +17,9 @@ const gameApi = {
   async update(id, data) {
     return await http.put(`/rest/games/${id}`, data)
   },
+  async endGame(gameId) {
+    return await http.post(`/rest/games/endGame?gameId=${gameId}`)
+  },
 }
 
 export default gameApi

@@ -21,20 +21,30 @@ const schema = new mongoose.Schema(
       foulCount: { type: Number, default: 0 },
       suspendCout: { type: Number, default: 0 },
     },
-    events: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'GameEvent' }],
+    // events: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'GameEvent' }],
     dateTime: { type: Date, default: Date.now },
     rule: { type: mongoose.SchemaTypes.ObjectId, ref: 'Rule' },
     place: { type: String },
     creatorUserId: { type: mongoose.SchemaTypes.ObjectId, ref: 'User' },
     creationTime: { type: Date, default: Date.now },
-    status:{type:Number,default:0},// 0 进行中，1已结束
+    status: { type: Number, default: 0 }, // 0 进行中，1已结束
     // 进行到第几节
     section: { type: Number, default: 1 },
     // 进行到第几分钟
     countdown: { type: Number },
   },
+  {
+    toJSON: { virtuals: true }, // 转换成 JSON 时加入虚拟字段
+  }
 )
 
 // events
+
+schema.virtual('events', {
+  localField: '_id',
+  foreignField: 'gameId',
+  justOne: false,
+  ref: 'GameEvent',
+})
 
 module.exports = mongoose.model('Game', schema)

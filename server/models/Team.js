@@ -20,5 +20,18 @@ schema.virtual('players', {
   justOne: false,
   ref: 'Player',
 })
+schema.virtual('agames', {
+  localField: '_id',
+  foreignField: 'teama.id',
+  justOne: false,
+  ref: 'Game',
+})
+schema.virtual('bgames', {
+  localField: '_id',
+  foreignField: 'teamb.id',
+  justOne: false,
+  ref: 'Game',
+})
+
 
 module.exports = mongoose.model('Team', schema)

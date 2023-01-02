@@ -7,6 +7,7 @@
       :curTime="curTime"
       :events="events"
       :rest="!!restCountdown"
+      :pause="!!pauseCountdown"
     ></action-header>
     <div class="action-body d-flex">
       <player-list
@@ -24,9 +25,12 @@
       ></player-list>
     </div>
     <div class="bottom-btns-wrap">
-      <van-button @click="endRest" v-if="restCountdown">结束休息</van-button>
-      <van-icon name="play-circle" v-if="!countdownActive" @click="startTime" />
-      <van-icon name="pause-circle" v-else @click="pauseTime" />
+      <van-button @click="endPause" v-if="pauseCountdown">结束暂停</van-button>
+      <van-button @click="endRest" v-else-if="restCountdown">结束休息</van-button>
+      <template v-else>
+        <van-icon name="play-circle" v-if="!countdownActive" @click="startTime" />
+        <van-icon name="pause-circle" v-else @click="pauseTime" />
+      </template>
       <van-icon name="add" @click="moreActionVisible = true" />
     </div>
     <van-popup v-model:show="actionEventVisible" round>
@@ -178,10 +182,10 @@
           </div>
           <div class="action-event-item">
             <div class="action-label">换人</div>
-            <van-button type="primary" class="action-btn" plain @click="replacement(game.teamb.id)">
-              {{ game.teamb.id.name }}换人
+            <van-button type="primary" class="action-btn" plain @click="replacement(game.teama)">
+              {{ game.teama.id.name }}换人
             </van-button>
-            <van-button type="primary" class="action-btn" plain @click="replacement(game.teamb.id)">
+            <van-button type="primary" class="action-btn" plain @click="replacement(game.teamb)">
               {{ game.teamb.id.name }}换人
             </van-button>
           </div>
@@ -210,11 +214,11 @@
     </van-popup>
 
     <van-popup v-model:show="assistVisible" round>
-      <div class="action-dialog">
+      <div class="action-dialog" v-if="assistVisible">
         <div class="px-4 py-3 d-flex ai-center">
           选择助攻球员
           <div class="flex-1"></div>
-          <van-icon name="close" @click="assistVisible = false" />
+          <van-icon name="close" @click="noAssistClick" />
         </div>
         <div class="action-dialog-body px-4 pb-5">
           <div>
@@ -227,6 +231,7 @@
               <span class="player-number-item">{{ player.number }}</span>
               <span>{{ player.name }}</span>
             </div>
+            <div @click="noAssistClick" class="player-item text-grey-1">无助攻球员</div>
           </div>
         </div>
       </div>
@@ -244,6 +249,23 @@
         </div>
       </div>
     </van-popup>
+
+    <van-popup v-model:show="replaceVisible" round>
+      <div v-if="replaceVisible" class="action-dialog">
+        <div class="px-4 py-3 d-flex ai-center">
+          <span>{{ activeReplaceTeam.id.name }}换人</span>
+          <div class="flex-1"></div>
+          <van-icon name="close" @click="replaceVisible = false" />
+        </div>
+        <div class="action-dialog-body px-4 pb-5">
+          <replace-player
+            :team="activeReplaceTeam"
+            :game="game"
+            @reload="handleReplaceReload"
+          ></replace-player>
+        </div>
+      </div>
+    </van-popup>
   </div>
 </template>
 
@@ -252,13 +274,14 @@ import { gameApi, gameEventApi } from '@/service/api'
 import ActionHeader from './components/ActionHeader.vue'
 import PlayerList from './components/PlayerList.vue'
 import EventList from './components/EventList.vue'
+import ReplacePlayer from './components/ReplacePlayer.vue'
 import gameEventType from './gameEventType'
 import local from '@/utils/local'
 import { showConfirmDialog, showDialog } from 'vant'
 import router from '@/router'
 
 export default {
-  components: { ActionHeader, PlayerList, EventList },
+  components: { ActionHeader, PlayerList, EventList, ReplacePlayer },
   props: {
     id: String,
   },
@@ -270,6 +293,9 @@ export default {
       countdownActive: false,
       countdown: 0,
       restCountdown: null,
+      pauseCountdown: null,
+      pauseTimer: null,
+      restTimer: null,
       timer: null,
 
       actionEventVisible: false,
@@ -280,17 +306,21 @@ export default {
 
       assistVisible: false,
       eventVisible: false,
+
+      activeReplaceTeam: null,
+      replaceVisible: false,
     }
   },
   computed: {
     assistPlayers() {
+      if (!this.activeTeam) return []
       return this.activeTeam.activePlayers.filter(
         (o) => this.activeTeam.lineup.includes(o._id) && o._id != this.activePlayer._id
       )
     },
     // 每节比赛时间
     timeOfEach() {
-      return this.game.rule.timeOfEach
+      return this.game.rule.timeOfEach * 60
     },
     // 常规时间节数
     quarterNumber() {
@@ -308,13 +338,17 @@ export default {
     // // 加时赛时间
     // timeOfOvertime: { type: Number, default: 5 },
     curTime() {
-      let time = this.restCountdown ? this.restCountdown : this.timeOfEach * 60 - this.countdown
+      let time = this.pauseCountdown
+        ? this.pauseCountdown
+        : this.restCountdown
+        ? this.restCountdown
+        : this.timeOfEach - this.countdown
 
       time = time > 0 ? time : 0
       let first = Math.floor(time / 60)
-      first = first >= this.timeOfEach ? first : '0' + first
+      first = first >= 10 ? first : '0' + first
       let scend = time % 60
-      scend = scend > this.timeOfEach ? scend : '0' + scend
+      scend = scend >= 10 ? scend : '0' + scend
       return [first.toString(), scend.toString()]
     },
   },
@@ -322,6 +356,8 @@ export default {
     let res = await gameApi.getById(this.id)
     this.game = res
     this.loadEvents()
+    // getById里没有players的信息
+    // this.events = res.events
     let countdown = local.data('gameTime')[this.game._id]
     if (countdown) {
       this.countdown = countdown
@@ -331,12 +367,24 @@ export default {
     this.resetTimer()
   },
   methods: {
+    // 根据队伍id获取分数
+    getTeamScore(teamId) {
+      let teamEvents = this.events.filter((o) => o.teamId === teamId)
+      return (
+        teamEvents.filter((o) => o.type === gameEventType.罚球).length +
+        teamEvents.filter((o) => o.type === gameEventType.两分).length * 2 +
+        teamEvents.filter((o) => o.type === gameEventType.三分).length * 3
+      )
+    },
     resetTimer() {
       if (this.timer) {
         clearTimeout(this.timer)
       }
       if (this.restTimer) {
         clearTimeout(this.restTimer)
+      }
+      if (this.pauseTimer) {
+        clearTimeout(this.pauseTimer)
       }
     },
     openEventVisible() {
@@ -366,9 +414,7 @@ export default {
     // 结束比赛
     async closeGame() {
       this.resetTimer()
-      await gameApi.update(this.game._id, {
-        status: 1,
-      })
+      await gameApi.endGame(this.game._id)
       router.push(`/game/result?id=${this.game._id}`)
     },
     // 手动结束本节
@@ -386,19 +432,12 @@ export default {
     },
     // 进入休息时间
     goInRest() {
-      if (this.game.section === this.quarterNumber) {
-        // 比赛结束
-        this.closeGame()
-        return
-      }
       this.countdown = 0
       // 存下当前时间
-      let data = {
+      local.data('gameTime', {
         key: this.game._id,
         value: this.countdown,
-      }
-      local.data('gameTime', data)
-
+      })
       gameApi.update(this.game._id, { countdown: this.countdown })
       this.countdownActive = false
       this.resetTimer()
@@ -439,7 +478,26 @@ export default {
       this.countdownActive = true
       this.timer = setTimeout(() => {
         this.countdown++
-        if (this.countdown > this.timeOfEach * 60) {
+        if (this.countdown > this.timeOfEach) {
+          if (this.game.section === this.quarterNumber) {
+            let teamaScore = this.getTeamScore(this.game.teama.id._id)
+            let teambScore = this.getTeamScore(this.game.teamb.id._id)
+            let message =
+              teamaScore > teambScore
+                ? this.game.teama.id.name + '获胜'
+                : teamaScore < teambScore
+                ? this.game.teamb.id.name + '获胜'
+                : '平局'
+            // 比赛结束
+            showDialog({
+              title: '比赛结束',
+              message: message,
+              confirmButtonText: '确定',
+            }).then(() => {
+              this.closeGame()
+            })
+            return
+          }
           // 小节结束
           showDialog({
             title: '本节已经结束',
@@ -468,7 +526,18 @@ export default {
       clearTimeout(this.timer)
       this.timer = null
     },
-    replacement(team) {},
+    replacement(team) {
+      this.moreActionVisible = false
+      this.activeReplaceTeam = team
+      this.replaceVisible = true
+    },
+    async handleReplaceReload() {
+      this.replaceVisible = false
+
+      let res = await gameApi.getById(this.id)
+      let isTeama = this.activeReplaceTeam.id._id === this.game.teama.id._id
+      this.activeReplaceTeam.lineup = res[isTeama ? 'teama' : 'teamb'].lineup
+    },
     async teamPause(team) {
       await gameEventApi.add({
         type: gameEventType.暂停,
@@ -482,10 +551,44 @@ export default {
       this.loadEvents()
       this.moreActionVisible = false
       this.pauseTime()
+
+      this.bolPauseGame = true
+      this.pauseCountdown = this.game.rule.pauseDuration
+      this.startPauseTime()
+    },
+    startPauseTime() {
+      this.pauseTimer = setTimeout(() => {
+        this.pauseCountdown--
+        if (this.pauseCountdown === 0) {
+          this.endRest()
+          // 暂停时间到
+          return
+        }
+
+        // 存下当前时间
+        let data = {
+          key: this.game._id,
+          value: this.pauseCountdown,
+        }
+        local.data('gamePauseTime', data)
+
+        this.startPauseTime()
+      }, 1000)
+    },
+    endPause() {
+      this.pauseCountdown = null
+      clearTimeout(this.pauseTimer)
+      this.startTime()
     },
     getScore(type) {
+      this.actionEventVisible = false
       this.assistVisible = true
       this.activeEventType = type
+    },
+    noAssistClick() {
+      this.assistVisible = false
+      this.actionEventClick(this.activeEventType)
+      this.activeEventType = null
     },
     async assistEvent(player) {
       this.assistVisible = false

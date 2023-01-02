@@ -3,7 +3,7 @@
   <div class="flex-1 team-list">
     <div
       class="player-item"
-      v-for="player in team.activePlayers"
+      v-for="player in players"
       :key="player._id"
       :class="team.lineup.includes(player._id) && 'player-lineup-item'"
       @click="$emit('action', player)"
@@ -36,6 +36,11 @@ export default {
     return {}
   },
   computed: {
+    players() {
+      return this.team.activePlayers
+        .filter((o) => this.team.lineup.includes(o._id))
+        .concat(this.team.activePlayers.filter((o) => !this.team.lineup.includes(o._id)))
+    },
     foulList() {
       let events = this.events.filter((o) =>
         [gameEventType.犯规, gameEventType.技术犯规, gameEventType.违体犯规].includes(o.type)
