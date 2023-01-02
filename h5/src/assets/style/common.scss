@@ -66,6 +66,7 @@ label {
 .text-link {
   color: #03a9f4;
   cursor: pointer;
+
   &:hover {
     text-decoration: underline;
   }
@@ -78,6 +79,7 @@ label {
 .vertical-md {
   vertical-align: middle;
 }
+
 // text overflow
 .text-ellipsis {
   display: inline-block;
@@ -144,9 +146,11 @@ label {
   max-width: 10em;
   overflow: hidden;
 }
+
 .selected .sub-label {
   margin-right: 20px;
 }
+
 // 适用于element的option选项最右侧文字
 .option-right_text {
   color: #999;
@@ -159,8 +163,46 @@ label {
   text-align: right;
   margin-left: 1em;
 }
-.main-bg{
+
+.main-bg {
   background-color: #f2f2f2;
   min-height: calc(100vh - 46px);
   box-sizing: border-box;
+}
+
+.qgg-table {
+  border-collapse: collapse;
+  width: 100%;
+  // border: 1px solid #c6c6c6 !important;
+  margin-bottom: 20px;
+}
+
+.qgg-table th {
+  border-collapse: collapse;
+  // border-right: 1px solid #c6c6c6 !important;
+  // border-bottom: 1px solid #c6c6c6 !important;
+  background-color: #ddeeff !important;
+  padding: 5px 9px;
+  font-size: 14px;
+  font-weight: normal;
+  text-align: center;
+}
+
+.qgg-table td {
+  border-collapse: collapse;
+  // border-right: 1px solid #c6c6c6 !important;
+  // border-bottom: 1px solid #c6c6c6 !important;
+  padding: 5px 9px;
+  font-size: 12px;
+  font-weight: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+.qgg-table tr:nth-child(odd) {
+  background-color: #fff !important;
+}
+
+.qgg-table tr:nth-child(even) {
+  background-color: #f8f8f8 !important;
 }

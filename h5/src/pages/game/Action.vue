@@ -261,27 +261,32 @@
           <replace-player
             :team="activeReplaceTeam"
             :game="game"
+            :countdown="countdown"
             @reload="handleReplaceReload"
           ></replace-player>
         </div>
       </div>
     </van-popup>
   </div>
+  <div class="van-overlay" v-if="startOverlayVisible">
+    <overlay-cover v-if="game" :game="game" @start="firstStartGame"></overlay-cover>
+  </div>
 </template>
 
 <script>
-import { gameApi, gameEventApi } from '@/service/api'
+import { gameApi, gameEventApi, gameTimeApi } from '@/service/api'
 import ActionHeader from './components/ActionHeader.vue'
 import PlayerList from './components/PlayerList.vue'
 import EventList from './components/EventList.vue'
 import ReplacePlayer from './components/ReplacePlayer.vue'
+import OverlayCover from './components/OverlayCover.vue'
 import gameEventType from './gameEventType'
 import local from '@/utils/local'
 import { showConfirmDialog, showDialog } from 'vant'
 import router from '@/router'
 
 export default {
-  components: { ActionHeader, PlayerList, EventList, ReplacePlayer },
+  components: { ActionHeader, PlayerList, EventList, ReplacePlayer, OverlayCover },
   props: {
     id: String,
   },
@@ -309,6 +314,8 @@ export default {
 
       activeReplaceTeam: null,
       replaceVisible: false,
+
+      startOverlayVisible: true,
     }
   },
   computed: {
@@ -415,7 +422,7 @@ export default {
     async closeGame() {
       this.resetTimer()
       await gameApi.endGame(this.game._id)
-      router.push(`/game/result?id=${this.game._id}`)
+      router.replace(`/game/result?id=${this.game._id}`)
     },
     // 手动结束本节
     handleCloseSection() {
@@ -473,6 +480,35 @@ export default {
 
         this.startRestTime()
       }, 1000)
+    },
+    // 第一次自动开始比赛
+    firstStartGame() {
+      this.startTime()
+      this.startOverlayVisible = false
+      let arr = []
+      this.game.teama.lineup.forEach((o) => {
+        arr.push({
+          upOrDown: 1,
+          player: o,
+          quarter: this.game.section,
+          time: this.countdown,
+          matchId: this.game.match._id,
+          gameId: this.game._id,
+          teamId: this.game.teama.id._id,
+        })
+      })
+      this.game.teamb.lineup.forEach((o) => {
+        arr.push({
+          upOrDown: 1,
+          player: o,
+          quarter: this.game.section,
+          time: this.countdown,
+          matchId: this.game.match._id,
+          gameId: this.game._id,
+          teamId: this.game.teamb.id._id,
+        })
+      })
+      gameTimeApi.add(arr)
     },
     startTime() {
       this.countdownActive = true

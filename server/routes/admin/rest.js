@@ -55,19 +55,24 @@ module.exports = function (app) {
         suspendCout: getSuspendEvents(game.teamb.id._id),
       },
     }
-    const model = await req.Model.findByIdAndUpdate(req.params.id, {place:"北大"})
-
-    res.send(obj)
+    const model = await Game.findByIdAndUpdate(gameId, obj)
+    game = await Game.findById(gameId)
+    res.send(game)
   })
 
   // 创建资源
   router.post('/', async (req, res) => {
-    req.body.creatorUserId = req.user._id
+    if (Array.isArray(req.body)) {
+      req.body.forEach((el) => (el.creatorUserId = req.user._id))
+    } else {
+      req.body.creatorUserId = req.user._id
+    }
     const model = await req.Model.create(req.body)
     res.send(model)
   })
   // 更新资源
   router.put('/:id', async (req, res) => {
+    console.log(req.body)
     const model = await req.Model.findByIdAndUpdate(req.params.id, req.body)
     res.send(model)
   })
@@ -96,7 +101,7 @@ module.exports = function (app) {
       return
     }
 
-    const items = await req.Model.find().setOptions(queryOptions).limit(100)
+    const items = await req.Model.find().setOptions(queryOptions).limit(1000)
     res.send(items)
   })
   // 资源详情
@@ -121,8 +126,17 @@ module.exports = function (app) {
     var ObjectId = mongoose.Types.ObjectId
     assert(req.Model.modelName === 'GameEvent', 404, '错误地址')
     const { gameId } = req.query
-    let model = await req.Model.find({ gameId: ObjectId(gameId) }).populate('player')
+    let model = await req.Model.find({ gameId: ObjectId(gameId) }).populate('player').limit(10000)
 
+    res.send(model)
+  })
+  router.get('/getTimesByGameId', async (req, res) => {
+    var ObjectId = mongoose.Types.ObjectId
+    assert(req.Model.modelName === 'GameTime', 404, '错误地址')
+    const { gameId } = req.query
+    let model = await req.Model.find({ gameId: ObjectId(gameId) }).limit(10000)
+    const times=await req.Model.find()
+    console.log(times.map(o=>o.gameId))
     res.send(model)
   })
 

@@ -27,12 +27,13 @@
 </template>
 
 <script>
-import { gameApi } from '@/service/api'
+import { gameApi, gameTimeApi } from '@/service/api'
 import { showFailToast } from 'vant'
 export default {
   props: {
     team: Object,
     game: Object,
+    countdown: Number,
   },
   data() {
     return {
@@ -89,9 +90,35 @@ export default {
         foulCount: team.foulCount,
         suspendCout: team.suspendCout,
       }
-
+      this.insertGameTime()
       await gameApi.update(this.game._id, obj)
       this.$emit('reload')
+    },
+    async insertGameTime() {
+      var arr = []
+      this.downPlayers.forEach((o) => {
+        arr.push({
+          upOrDown: 0,
+          player: o,
+          quarter: this.game.section,
+          time: this.countdown,
+          matchId: this.game.match._id,
+          gameId: this.game._id,
+          teamId: this.team.id._id,
+        })
+      })
+      this.upPlayers.forEach((o) => {
+        arr.push({
+          upOrDown: 1,
+          player: o,
+          quarter: this.game.section,
+          time: this.countdown,
+          matchId: this.game.match._id,
+          gameId: this.game._id,
+          teamId: this.team.id._id,
+        })
+      })
+      gameTimeApi.add(arr)
     },
   },
 }

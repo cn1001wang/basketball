@@ -17,8 +17,8 @@
   <div class="text-center">
     <div v-for="game in games" :key="game._id">
       <p v-if="isFirstMonth(game)" class="date-p">{{ formatMonth(game.dateTime) }}</p>
-      <van-swipe-cell class="game-cell" @click="toAction(game)">
-        <div class="d-flex ai-center game-list-item">
+      <van-swipe-cell class="game-cell">
+        <div class="d-flex ai-center game-list-item" @click="toAction(game)">
           <div class="team-avatar-item">
             <team-logo size="58" round :logo="game.teama.team.logo" class="team-logo"></team-logo>
             <div class="text-black pt-1">{{ game.teama.team.name }}</div>
@@ -26,12 +26,15 @@
           <div class="flex-1">
             <p>{{ formatDate(game.dateTime) }}</p>
             <div class="score-wrap">
-              <span class="score-span">{{ game.teama.source || 0 }}</span>
+              <span class="score-span">{{ game.teama.score || 0 }}</span>
               <span>-</span>
-              <span class="score-span">{{ game.teamb.source || 0 }}</span>
+              <span class="score-span">{{ game.teamb.score || 0 }}</span>
             </div>
             <div v-if="!game.status">
               <van-tag type="success" round>进行中</van-tag>
+            </div>
+            <div v-else>
+              <van-tag type="success" round>已完成</van-tag>
             </div>
             <div class="text-grey">{{ game.place }}</div>
           </div>
@@ -144,8 +147,13 @@ function isFirstMonth(game) {
 }
 
 // 跳转到比赛页
-function toAction(game){
-  router.push(`/game/action?id=${game._id}`)
+function toAction(game) {
+  console.log(game.status)
+  if (game.status==1) {
+    router.push(`/game/result?id=${game._id}`)
+  } else {
+    router.push(`/game/action?id=${game._id}`)
+  }
 }
 </script>
 <style lang="scss">
@@ -189,7 +197,7 @@ function toAction(game){
   font-size: 24px;
   color: #000;
 }
-.game-cell{
+.game-cell {
   border-bottom: 1px solid #e2e2e2;
   padding: 10px 0 5px;
 }
