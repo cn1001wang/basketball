@@ -8,8 +8,8 @@ var corsOptions = {
 }
 app.use(require('cors')())
 app.use(express.json())
-app.use('/', express.static(__dirname + '/wwwroot/web'))
-app.use('/admin', express.static(__dirname + '/wwwroot/admin'))
+app.use('/', express.static(__dirname + '/wwwroot/h5'))
+// app.use('/admin', express.static(__dirname + '/wwwroot/admin'))
 app.use('/uploads', express.static(__dirname + '/wwwroot/uploads'))
 
 require('./plugins/db')(app)

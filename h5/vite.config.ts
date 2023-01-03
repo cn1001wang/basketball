@@ -47,6 +47,7 @@ export default defineConfig({
   // 生产环境打包配置
   //去除 console debugger
   build: {
+    outDir: '../server/wwwroot/h5',
     terserOptions: {
       compress: {
         drop_console: true,
