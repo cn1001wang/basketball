@@ -1,6 +1,6 @@
 <template>
   <div class="py-5">
-    <h1 class="text-center py-2">用户登陆</h1>
+    <h1 class="text-center py-2">新用户注册</h1>
     <van-cell-group inset>
       <van-field
         v-model="form.username"
@@ -15,10 +15,15 @@
         placeholder="请输入密码"
         type="password"
       />
+      <van-field
+        v-model="form.passwordConfirm"
+        name="passwordConfirm"
+        label="确认密码"
+        placeholder="请再输入一遍密码"
+        type="password"
+      />
       <div class="py-4"></div>
-      <van-button type="primary" block @click="submit">登录</van-button>
-      <div class="py-4"></div>
-      <van-button block @click="tosignup">注册</van-button>
+      <van-button type="success" block @click="submit">注册新用户</van-button>
     </van-cell-group>
   </div>
 </template>
@@ -31,6 +36,7 @@ import router from '@/router'
 const form = reactive({
   username: '',
   password: '',
+  passwordConfirm: '',
 })
 
 async function submit() {
@@ -40,14 +46,17 @@ async function submit() {
   if (!form.password) {
     return showToast({ type: 'fail', message: '请输入密码' })
   }
-  var res: any = await userApi.login(form)
+  if (form.password.length < 6) {
+    return showToast({ type: 'fail', message: '请输入超过六位的密码' })
+  }
+  if (form.password != form.passwordConfirm) {
+    return showToast({ type: 'fail', message: '两次密码输入不一致' })
+  }
+  var res: any = await userApi.signup(form)
 
-  showToast({ type: 'success', message: '登录成功！' })
-  localStorage.setItem('token', res.token)
-  router.push('/')
-}
-function tosignup() {
-  router.push('/signup')
+  showToast({ type: 'success', message: '注册成功！' })
+  //   localStorage.setItem('token', res.token)
+  router.push('/login')
 }
 </script>
 

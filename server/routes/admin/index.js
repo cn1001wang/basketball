@@ -41,6 +41,23 @@ module.exports = (app) => {
     res.send({ token })
   })
 
+  app.post('/admin/api/signup', async (req, res) => {
+    const { username, password } = req.body
+    // 1.根据用户名找用户
+
+    const user = await User.findOne({ username }).select('+password')
+    assert(!user, 422, '用户已存在')
+    const data = await User.create({ username, password })
+    // 2.校验密码
+    // const isValid = require('bcrypt').compareSync(password, user.password)
+    // assert(isValid, 422, '密码错误')
+    // 3.返回token
+    // const token = jwt.sign({ id: user._id }, app.get('secret'))
+    res.send({
+      username,
+      _id: data._id,
+    })
+  })
 
   // 错误处理函数
   app.use(async (err, req, res, next) => {

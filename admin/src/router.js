@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Login from './views/Login.vue'
+import Signup from './views/Signup.vue'
 import Main from './views/Main.vue'
 import CategoryEdit from './views/CategoryEdit.vue'
 import CategoryList from './views/CategoryList.vue'
@@ -26,6 +27,7 @@ Vue.use(Router)
 const router = new Router({
   routes: [
     { path: '/login', name: 'login', component: Login, meta: { isPublic: true } },
+    { path: '/signup', name: 'signup', component: Signup, meta: { isPublic: true } },
     {
       path: '/',
       name: 'main',

@@ -7,6 +7,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/login/Login.vue'),
   },
   {
+    path: '/Signup',
+    name: 'Signup',
+    component: () => import('@/pages/login/Signup.vue'),
+  },
+  {
     path: '/',
     name: 'Home',
     redirect: '/game',
