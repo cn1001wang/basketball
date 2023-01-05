@@ -66,7 +66,7 @@
 
 <script setup lang="ts">
 import { teamApi } from '@/service/api'
-import { showToast } from 'vant'
+import { showToast } from '@/utils/index.js'
 import { defineProps, defineEmits, ref, Ref } from 'vue'
 
 const positionList = [

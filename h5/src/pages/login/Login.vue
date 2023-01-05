@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { showToast } from 'vant'
+import { showToast } from '@/utils/index.js'
 import { reactive } from 'vue'
 import { userApi } from '@/service/api'
 import router from '@/router'

@@ -34,7 +34,7 @@
 import router from '@/router'
 import { reactive } from 'vue'
 import { matchApi } from '@/service/api/index.js'
-import { showToast } from 'vant'
+import { showToast } from '@/utils/index.js'
 import 'vant/es/toast/style'
 
 const form = reactive({

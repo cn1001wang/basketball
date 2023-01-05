@@ -1,7 +1,7 @@
 const express = require("express")
-
+var history = require('connect-history-api-fallback');
 const app = express()
-
+app.use(history());
 app.set('secret', 'fasd54sdcf276f')
 var corsOptions = {
   origin: 'http://localhost:8000',

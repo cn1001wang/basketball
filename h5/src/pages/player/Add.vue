@@ -59,7 +59,7 @@
 <script setup lang="ts">
 import router from '@/router'
 import { playerApi } from '@/service/api'
-import { showToast } from 'vant/lib/toast'
+import { showToast } from '@/utils/index.js'
 import { reactive, ref, computed, defineProps } from 'vue'
 
 const props = defineProps({

@@ -92,7 +92,7 @@
 import router from '@/router'
 import { reactive, ref, defineProps, computed, Ref } from 'vue'
 import { gameApi, ruleApi } from '@/service/api/index.js'
-import { showToast } from 'vant'
+import { showToast } from '@/utils/index.js'
 import dayjs from 'dayjs'
 import 'vant/es/toast/style'
 import TeamChose from './components/TeamChose.vue'

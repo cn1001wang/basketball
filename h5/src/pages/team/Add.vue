@@ -30,7 +30,7 @@
 <script setup lang="ts">
 import router from '@/router'
 import { teamApi } from '@/service/api'
-import { showToast } from 'vant/lib/toast'
+import { showToast } from '@/utils/index.js'
 import { reactive, defineProps } from 'vue'
 
 const props = defineProps({
